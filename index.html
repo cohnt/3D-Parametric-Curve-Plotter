@@ -7,6 +7,31 @@
 </head>
 <body>
 <div id="inputPanel" class="container">
+	<div id="instructions">
+		<p>List of allowed functions and characters</p>
+		<ul>
+			<li><pre>All numbers (including the decimal point, when used appropriately)</pre></li>
+			<li><pre>t (the parameter variable)</pre></li>
+			<li><pre>Parenthesis (make sure they match!)</pre></li>
+			<li><pre>+, -, *, /, ^</pre></li>
+			<li><pre>cos, sin, tan, cot, sec, csc</pre></li>
+			<li><pre>arccos, arcsin, arctan</pre></li>
+			<li><pre>sqrt</pre></li>
+			<li><pre>log, ln, logbase{base}</pre></li>
+			<li><pre>pi, e</pre></li>
+		</ul>
+		<p>Use brackets {} after each function. Sine is sin{}, square root is sqrt{}, and logarithm is logbase{base}{}.</p>
+		<br>
+		<p>Sample valid entries:</p>
+		<ul>
+			<li><pre>sin{3*t}</pre></li>
+			<li><pre>sqrt{logbase{2}{t}}</pre></li>
+			<li><pre>3*e*t</pre></li>
+			<li><pre>arctan{pi*(t^{2})}</pre></li>
+		</ul>
+	</div>
+	<br>
+	<br>
 	<div id="functionInput" class="container">
 		<div id="xFunctionContainer" class="container functionContainer">
 			<p>x(t)=</p><textarea id="xFunction" class="functionInput"></textarea>

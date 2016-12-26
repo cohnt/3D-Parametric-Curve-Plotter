@@ -12,7 +12,14 @@ textarea {
 div {
 	display: inline-block;
 }
+pre {
+	margin: 2px;
+}
 
+div.container {
+	border: 1px dotted #555555;
+	margin: 1px;
+}
 textarea.functionInput {
 	height: 18px;
 	width: 200px;
