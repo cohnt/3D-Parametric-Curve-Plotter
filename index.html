@@ -29,28 +29,37 @@
 			<li><pre>3*e*t</pre></li>
 			<li><pre>arctan{pi*(t^{2})}</pre></li>
 		</ul>
+		<p>Pan the graph by clicking and dragging. Rotate by holding shift while moving the mouse. Zoom with the mouse wheel.</p>
 	</div>
 	<br>
 	<br>
 	<div id="functionInput" class="container">
 		<div id="xFunctionContainer" class="container functionContainer">
-			<p>x(t)=</p><textarea id="xFunction" class="functionInput"></textarea>
+			<p>x(t)=</p><textarea id="xFunction" class="mathInput"></textarea>
 		</div>
 		<br>
 		<div id="yFunctionContainer" class="container functionContainer">
-			<p>y(t)=</p><textarea id="xFunction" class="functionInput"></textarea>
+			<p>y(t)=</p><textarea id="xFunction" class="mathInput"></textarea>
 		</div>
 		<br>
 		<div id="zFunctionContainer" class="container functionContainer">
-			<p>z(t)=</p><textarea id="xFunction" class="functionInput"></textarea>
+			<p>z(t)=</p><textarea id="xFunction" class="mathInput"></textarea>
 		</div>
 		<br>
 		<br>
 		<div id="plotButton" class="button">Plot</div>
 	</div>
 	<br>
+	<br>
+	<br>
 	<div id="graphOptions" class="container">
-
+		<div id="parameterRangeContainer">
+			<p>tmin=</p><textarea id="tmin" class="mathInput">0</textarea>
+			<br>
+			<p>tmax=</p><textarea id="tmax" class="mathInput">10</textarea>
+			<br>
+			<p>tstep=</p><textarea id="tstep" class="mathInput">0.01</textarea>
+		</div>
 	</div>
 </div>
 <div id="displayArea" class="container">

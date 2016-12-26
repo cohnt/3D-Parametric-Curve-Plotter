@@ -19,7 +19,7 @@ pre {
 div.container {
 	margin: 1px;
 }
-textarea.functionInput {
+textarea.mathInput {
 	height: 18px;
 	width: 200px;
 	resize: horizontal;
