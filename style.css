@@ -30,3 +30,8 @@ div#plotButton {
 	text-align: center;
 	padding: 10px;
 }
+div#returnToCenter {
+	background-color: #ff9999;
+	text-align: center;
+	padding: 10px;
+}
