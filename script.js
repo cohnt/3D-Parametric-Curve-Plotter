@@ -9,6 +9,9 @@ function setup() {
 	page.tmaxInputField = document.getElementById("tmax");
 	page.tstepInputField = document.getElementById("tstep");
 	page.recenterButton = document.getElementById("returnToCenter");
+	page.xValid = document.getElementById("xValid");
+	page.yValid = document.getElementById("yValid");
+	page.zValid = document.getElementById("zValid");
 }
 
 window.setTimeout(setup, 0);

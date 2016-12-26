@@ -24,6 +24,14 @@ textarea.mathInput {
 	width: 200px;
 	resize: horizontal;
 }
+div.valid {
+	height: 18px;
+	width: 50px;
+	background-color: #ff0000;
+	vertical-align: middle;
+	margin: 2px 8px;
+	text-align: center;
+}
 
 div#plotButton {
 	background-color: #ff9999;
