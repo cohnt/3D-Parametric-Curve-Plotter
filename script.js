@@ -3,7 +3,10 @@
 
 //Global Variables
 var page = {};
-var graph;
+var context;
+var xFunction;
+var yFunction;
+var zFunction;
 
 //Classes
 
@@ -23,8 +26,24 @@ function setup() {
 	page.zValid = document.getElementById("zValid");
 	page.canvas = document.getElementById("graph");
 
-	graph = page.canvas.getContext("2d");
+	context = page.canvas.getContext("2d");
+
+	loadInitialAndDefaults();
+	updateGraphComputations();
 }
+function loadInitialAndDefaults() {
+
+}
+function updateGraphComputations() {
+
+	updateGraphDisplay();
+}
+function updateGraphDisplay() {
+
+}
+
+//Event Listeners
+
 
 //Executed Code
 window.setTimeout(setup, 0);
