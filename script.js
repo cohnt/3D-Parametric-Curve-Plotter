@@ -1,13 +1,17 @@
 //Constants
-
+var zoomPowerConstant = 1.1; //This is used when calculating the zoom factor when scrolling.
+var mouseWheelCalibrationConstant = 53; //This is the value given when the mouse is scrolled one notch.
 
 //Global Variables
 var page = {};
 var keys = {};
+var mouseButtons = {};
 var context;
 var xFunction;
 var yFunction;
 var zFunction;
+var mouseLocation = [];
+var zoom = 1;
 
 //Classes
 
@@ -45,6 +49,28 @@ function setup() {
 	});
 	document.addEventListener("keyup", function(event) {
 		keys[String(event.which)] = false;
+	});
+	document.addEventListener("mousemove", function(event) {
+		mouseLocation[0] = event.clientX;
+		mouseLocation[1] = event.clientY;
+		if(mouseButtons["1"]) { //Left mouse button pressed, meaning we're panning.
+
+		}
+		else if(keys["16"]) { //Shift key pressed, meaning we're rotating
+
+		}
+	});
+	page.canvas.addEventListener("mousedown", function(event) {
+		mouseButtons[String(event.which)] = true;
+	});
+	document.addEventListener("mouseup", function(event) {
+		mouseButtons[String(event.which)] = false;
+	});
+	page.canvas.addEventListener("wheel", function(event) {
+		var wheelChange = event.deltaY;
+		var zoomMultiplier = Math.pow(zoomPowerConstant, wheelChange*(1/mouseWheelCalibrationConstant)); //I may want to change how this zoom works later.
+		zoom *= zoomMultiplier;
+		console.log(zoom);
 	});
 
 	loadInitialAndDefaults();
