@@ -3,6 +3,7 @@
 
 //Global Variables
 var page = {};
+var keys = {};
 var context;
 var xFunction;
 var yFunction;
@@ -38,6 +39,13 @@ function setup() {
 	page.tmaxInputField.addEventListener("change", updateGraphComputations);
 	page.tstepInputField.addEventListener("change", updateGraphComputations);
 	page.recenterButton.addEventListener("click", updateGraphDisplay);
+
+	document.addEventListener("keydown", function(event) {
+		keys[String(event.which)] = true;
+	});
+	document.addEventListener("keyup", function(event) {
+		keys[String(event.which)] = false;
+	});
 
 	loadInitialAndDefaults();
 	updateGraphComputations();
