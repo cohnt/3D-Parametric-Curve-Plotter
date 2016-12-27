@@ -13,6 +13,8 @@ var zFunction;
 
 //Functions
 function setup() {
+	console.log("FUNCTION CALL: setup()");
+	
 	page.xInputField = document.getElementById("xFunction");
 	page.yInputField = document.getElementById("yFunction");
 	page.zInputField = document.getElementById("zFunction");
@@ -32,18 +34,30 @@ function setup() {
 	updateGraphComputations();
 }
 function loadInitialAndDefaults() {
+	console.log("FUNCTION CALL: loadInitialAndDefaults()");
 
 }
 function updateGraphComputations() {
+	console.log("FUNCTION CALL: updateGraphComputations()");
 
 	updateGraphDisplay();
 }
 function updateGraphDisplay() {
-
+	console.log("FUNCTION CALL: updateGraphDisplay()");
+}
+function processFunctions() {
+	console.log("FUNCTION CALL: processFunctions()");
 }
 
 //Event Listeners
-
+page.xInputField.addEventListener("change", processFunctions);
+page.yInputField.addEventListener("change", processFunctions);
+page.zInputField.addEventListener("change", processFunctions);
+page.plotButton.addEventListener("click", updateGraphComputations);
+page.tminInputField.addEventListener("change", updateGraphComputations);
+page.tmaxInputField.addEventListener("change", updateGraphComputations);
+page.tstepInputField.addEventListener("change", updateGraphComputations);
+page.recenterButton.addEventListener("click", updateGraphDisplay);
 
 //Executed Code
 window.setTimeout(setup, 0);
