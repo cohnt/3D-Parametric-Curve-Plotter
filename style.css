@@ -14,6 +14,7 @@ div {
 }
 pre {
 	margin: 2px;
+	display: inline-block;
 }
 canvas {
 	border: 1px dotted black;
