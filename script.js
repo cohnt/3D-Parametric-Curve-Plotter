@@ -81,6 +81,7 @@ function loadInitialAndDefaults() {
 }
 function updateGraphComputations() {
 	console.log("FUNCTION CALL: updateGraphComputations()");
+	processFunctions();
 
 	updateGraphDisplay();
 }
@@ -89,6 +90,14 @@ function updateGraphDisplay() {
 }
 function processFunctions() {
 	console.log("FUNCTION CALL: processFunctions()");
+	//This is the hard part XD
+	xFunction = processFunction(page.xInputField.value);
+	yFunction = processFunction(page.yInputField.value);
+	zFunction = processFunction(page.zInputField.value);
+}
+function processFunction(functionString) {
+	console.log("FUNCTION CALL: processFunction("+functionString+")");
+	var evalString = functionString.slice(0);
 }
 function pannedGraph(delta) {
 	console.log("FUNCTION CALL: pannedGraph("+delta+")");
