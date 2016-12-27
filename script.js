@@ -55,6 +55,14 @@ function setup() {
 	page.tstepInputField.addEventListener("change", updateGraphComputations);
 	page.recenterButton.addEventListener("click", updateGraphDisplay);
 
+	mouseAndKeyboardInputSetup();
+
+	loadInitialAndDefaults();
+	updateGraphComputations();
+}
+function mouseAndKeyboardInputSetup() {
+	console.log("FUNCTION CALL: mouseAndKeyboardInputSetup()");
+
 	document.addEventListener("keydown", function(event) {
 		keys[String(event.which)] = true;
 		if(keys["16"]) { //Shift key pressed
@@ -104,9 +112,6 @@ function setup() {
 		zoom *= zoomMultiplier;
 		updateGraphDisplay();
 	});
-
-	loadInitialAndDefaults();
-	updateGraphComputations();
 }
 function loadInitialAndDefaults() {
 	console.log("FUNCTION CALL: loadInitialAndDefaults()");
