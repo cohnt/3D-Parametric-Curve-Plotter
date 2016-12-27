@@ -14,7 +14,7 @@ var zFunction;
 //Functions
 function setup() {
 	console.log("FUNCTION CALL: setup()");
-	
+
 	page.xInputField = document.getElementById("xFunction");
 	page.yInputField = document.getElementById("yFunction");
 	page.zInputField = document.getElementById("zFunction");
@@ -29,6 +29,15 @@ function setup() {
 	page.canvas = document.getElementById("graph");
 
 	context = page.canvas.getContext("2d");
+
+	page.xInputField.addEventListener("change", processFunctions);
+	page.yInputField.addEventListener("change", processFunctions);
+	page.zInputField.addEventListener("change", processFunctions);
+	page.plotButton.addEventListener("click", updateGraphComputations);
+	page.tminInputField.addEventListener("change", updateGraphComputations);
+	page.tmaxInputField.addEventListener("change", updateGraphComputations);
+	page.tstepInputField.addEventListener("change", updateGraphComputations);
+	page.recenterButton.addEventListener("click", updateGraphDisplay);
 
 	loadInitialAndDefaults();
 	updateGraphComputations();
@@ -48,16 +57,6 @@ function updateGraphDisplay() {
 function processFunctions() {
 	console.log("FUNCTION CALL: processFunctions()");
 }
-
-//Event Listeners
-page.xInputField.addEventListener("change", processFunctions);
-page.yInputField.addEventListener("change", processFunctions);
-page.zInputField.addEventListener("change", processFunctions);
-page.plotButton.addEventListener("click", updateGraphComputations);
-page.tminInputField.addEventListener("change", updateGraphComputations);
-page.tmaxInputField.addEventListener("change", updateGraphComputations);
-page.tstepInputField.addEventListener("change", updateGraphComputations);
-page.recenterButton.addEventListener("click", updateGraphDisplay);
 
 //Executed Code
 window.setTimeout(setup, 0);
