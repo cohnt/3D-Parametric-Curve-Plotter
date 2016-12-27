@@ -19,7 +19,10 @@ var xFunction;
 var yFunction;
 var zFunction;
 var mouseLocation = [];
+var oldMouseLocation = [];
 var zoom = 1;
+var currentlyPanning = false;
+var currentlyRotating = false;
 
 //Classes
 
@@ -54,31 +57,52 @@ function setup() {
 
 	document.addEventListener("keydown", function(event) {
 		keys[String(event.which)] = true;
+		if(keys["16"]) { //Shift key pressed
+			currentlyRotating = true;
+			oldMouseLocation[0] = event.clientX;
+			oldMouseLocation[1] = event.clientY;
+		}
 	});
 	document.addEventListener("keyup", function(event) {
 		keys[String(event.which)] = false;
+		if(keys["16"]) { //Shift key released
+			currentlyRotating = false;
+		}
 	});
 	document.addEventListener("mousemove", function(event) {
 		mouseLocation[0] = event.clientX;
 		mouseLocation[1] = event.clientY;
-		if(mouseButtons["1"]) { //Left mouse button pressed, meaning we're panning.
 
+		delta = [];
+		delta[0] = mouseLocation[0] - oldMouseLocation[0];
+		delta[1] = mouseLocation[1] - oldMouseLocation[1];
+		//Panning takes precedence over rotating.
+		if(currentlyPanning) {
+			pannedGraph(delta);
 		}
-		else if(keys["16"]) { //Shift key pressed, meaning we're rotating
-
+		else if(currentlyRotating) {
+			rotatedGraph(delta);
 		}
+		oldMouseLocation[0] = mouseLocation[0];
+		oldMouseLocation[1] = mouseLocation[1];
 	});
 	page.canvas.addEventListener("mousedown", function(event) {
 		mouseButtons[String(event.which)] = true;
+		if(mouseButtons["1"]) { //Left mouse button pressed
+			currentlyPanning = true;
+		}
 	});
 	document.addEventListener("mouseup", function(event) {
 		mouseButtons[String(event.which)] = false;
+		if(mouseButtons["1"]) { //Left mouse button released
+			currentlyPanning = false;
+		}
 	});
 	page.canvas.addEventListener("wheel", function(event) {
 		var wheelChange = event.deltaY;
 		var zoomMultiplier = Math.pow(zoomPowerConstant, wheelChange*(1/mouseWheelCalibrationConstant)); //I may want to change how this zoom works later.
 		zoom *= zoomMultiplier;
-		console.log(zoom);
+		updateGraphDisplay();
 	});
 
 	loadInitialAndDefaults();
@@ -103,6 +127,16 @@ function updateGraphDisplay() {
 }
 function processFunctions() {
 	console.log("FUNCTION CALL: processFunctions()");
+}
+function pannedGraph(delta) {
+	console.log("FUNCTION CALL: pannedGraph("+delta+")");
+
+	updateGraphDisplay();
+}
+function rotatedGraph(delta) {
+	console.log("FUNCTION CALL: rotatedGraph("+delta+")");
+
+	updateGraphDisplay();
 }
 
 //Executed Code
