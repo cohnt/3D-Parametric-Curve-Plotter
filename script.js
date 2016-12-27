@@ -58,60 +58,17 @@ function setup() {
 	mouseAndKeyboardInputSetup();
 
 	loadInitialAndDefaults();
-	updateGraphComputations();
+	window.setTimeout(updateGraphComputations, 0);
 }
 function mouseAndKeyboardInputSetup() {
 	console.log("FUNCTION CALL: mouseAndKeyboardInputSetup()");
 
-	document.addEventListener("keydown", function(event) {
-		keys[String(event.which)] = true;
-		if(keys["16"]) { //Shift key pressed
-			currentlyRotating = true;
-			oldMouseLocation[0] = event.clientX;
-			oldMouseLocation[1] = event.clientY;
-		}
-	});
-	document.addEventListener("keyup", function(event) {
-		keys[String(event.which)] = false;
-		if(keys["16"]) { //Shift key released
-			currentlyRotating = false;
-		}
-	});
-	document.addEventListener("mousemove", function(event) {
-		mouseLocation[0] = event.clientX;
-		mouseLocation[1] = event.clientY;
-
-		delta = [];
-		delta[0] = mouseLocation[0] - oldMouseLocation[0];
-		delta[1] = mouseLocation[1] - oldMouseLocation[1];
-		//Panning takes precedence over rotating.
-		if(currentlyPanning) {
-			pannedGraph(delta);
-		}
-		else if(currentlyRotating) {
-			rotatedGraph(delta);
-		}
-		oldMouseLocation[0] = mouseLocation[0];
-		oldMouseLocation[1] = mouseLocation[1];
-	});
-	page.canvas.addEventListener("mousedown", function(event) {
-		mouseButtons[String(event.which)] = true;
-		if(mouseButtons["1"]) { //Left mouse button pressed
-			currentlyPanning = true;
-		}
-	});
-	document.addEventListener("mouseup", function(event) {
-		mouseButtons[String(event.which)] = false;
-		if(mouseButtons["1"]) { //Left mouse button released
-			currentlyPanning = false;
-		}
-	});
-	page.canvas.addEventListener("wheel", function(event) {
-		var wheelChange = event.deltaY;
-		var zoomMultiplier = Math.pow(zoomPowerConstant, wheelChange*(1/mouseWheelCalibrationConstant)); //I may want to change how this zoom works later.
-		zoom *= zoomMultiplier;
-		updateGraphDisplay();
-	});
+	document.addEventListener("keydown", function(event) { keydown(event); });
+	document.addEventListener("keyup", function(event) { keyup(event); });
+	document.addEventListener("mousemove", function(event) { mouseMoved(event); });
+	page.canvas.addEventListener("mousedown", function(event) { mousedown(event); });
+	document.addEventListener("mouseup", function(event) { mouseup(event); });
+	page.canvas.addEventListener("wheel", function(event) { wheel(event); });
 }
 function loadInitialAndDefaults() {
 	console.log("FUNCTION CALL: loadInitialAndDefaults()");
@@ -141,6 +98,55 @@ function pannedGraph(delta) {
 function rotatedGraph(delta) {
 	console.log("FUNCTION CALL: rotatedGraph("+delta+")");
 
+	updateGraphDisplay();
+}
+function mouseMoved(event) {
+	mouseLocation[0] = event.clientX;
+	mouseLocation[1] = event.clientY;
+
+	delta = [];
+	delta[0] = mouseLocation[0] - oldMouseLocation[0];
+	delta[1] = mouseLocation[1] - oldMouseLocation[1];
+	//Panning takes precedence over rotating.
+	if(currentlyPanning) {
+		pannedGraph(delta);
+	}
+	else if(currentlyRotating) {
+		rotatedGraph(delta);
+	}
+	oldMouseLocation[0] = mouseLocation[0];
+	oldMouseLocation[1] = mouseLocation[1];
+}
+function keydown(event) {
+	keys[String(event.which)] = true;
+	if(keys["16"]) { //Shift key pressed
+		currentlyRotating = true;
+		oldMouseLocation[0] = event.clientX;
+		oldMouseLocation[1] = event.clientY;
+	}
+}
+function keyup(event) {
+	keys[String(event.which)] = false;
+	if(keys["16"]) { //Shift key released
+		currentlyRotating = false;
+	}
+}
+function mousedown(event) {
+	mouseButtons[String(event.which)] = true;
+	if(mouseButtons["1"]) { //Left mouse button pressed
+		currentlyPanning = true;
+	}
+}
+function mouseup(event) {
+	mouseButtons[String(event.which)] = false;
+	if(mouseButtons["1"]) { //Left mouse button released
+		currentlyPanning = false;
+	}
+}
+function wheel(event) {
+	var wheelChange = event.deltaY;
+	var zoomMultiplier = Math.pow(zoomPowerConstant, wheelChange*(1/mouseWheelCalibrationConstant)); //I may want to change how this zoom works later.
+	zoom *= zoomMultiplier;
 	updateGraphDisplay();
 }
 
