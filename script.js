@@ -7,7 +7,9 @@ var defaults = { //The defaults that the page loads when you first open it.
 	z: "0.5*t",
 	tmin: "-4*pi",
 	tmax: "4*pi",
-	tstep: "pi/64"
+	tstep: "pi/64",
+	center: [0, 0, 0],
+	zoom: 1;
 };
 
 //Global Variables
@@ -20,7 +22,7 @@ var yFunction;
 var zFunction;
 var mouseLocation = [];
 var oldMouseLocation = [];
-var zoom = 1;
+var zoom = defaults.zoom;
 var currentlyPanning = false;
 var currentlyRotating = false;
 
@@ -53,7 +55,7 @@ function setup() {
 	page.tminInputField.addEventListener("change", updateGraphComputations);
 	page.tmaxInputField.addEventListener("change", updateGraphComputations);
 	page.tstepInputField.addEventListener("change", updateGraphComputations);
-	page.recenterButton.addEventListener("click", updateGraphDisplay);
+	page.recenterButton.addEventListener("click", recenter);
 
 	mouseAndKeyboardInputSetup();
 
@@ -99,6 +101,10 @@ function processFunction(functionString) {
 	console.log("FUNCTION CALL: processFunction("+functionString+")");
 	var evalString = functionString.slice(0);
 }
+function recenter() {
+	zoom = 1;
+}
+
 function pannedGraph(delta) {
 	console.log("FUNCTION CALL: pannedGraph("+delta+")");
 
@@ -113,7 +119,7 @@ function mouseMoved(event) {
 	mouseLocation[0] = event.clientX;
 	mouseLocation[1] = event.clientY;
 
-	delta = [];
+	var delta = [];
 	delta[0] = mouseLocation[0] - oldMouseLocation[0];
 	delta[1] = mouseLocation[1] - oldMouseLocation[1];
 	//Panning takes precedence over rotating.
@@ -156,6 +162,7 @@ function wheel(event) {
 	var wheelChange = event.deltaY;
 	var zoomMultiplier = Math.pow(zoomPowerConstant, wheelChange*(1/mouseWheelCalibrationConstant)); //I may want to change how this zoom works later.
 	zoom *= zoomMultiplier;
+	console.log(zoom);
 	updateGraphDisplay();
 }
 
