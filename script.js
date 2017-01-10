@@ -9,7 +9,7 @@ var defaults = { //The defaults that the page loads when you first open it.
 	tmax: "4*pi",
 	tstep: "pi/64",
 	center: [0, 0, 0],
-	zoom: 1;
+	zoom: 1
 };
 
 //Global Variables
