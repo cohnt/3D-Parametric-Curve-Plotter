@@ -46,6 +46,7 @@ function setup() {
 	page.zValid = document.getElementById("zValid");
 	page.canvas = document.getElementById("graph");
 
+	page.canvas.style.transform = "matrix(0, -1, 1, 0, 0, 0)"; //Flip the entire canvas, so an increase in y is up instead of down.
 	context = page.canvas.getContext("2d");
 
 	page.xInputField.addEventListener("change", processFunctions);
@@ -89,7 +90,28 @@ function updateGraphComputations() {
 }
 function updateGraphDisplay() {
 	console.log("FUNCTION CALL: updateGraphDisplay()");
+
+	clearCanvas();
+	setConstantContextTransforms();
 }
+function clearCanvas() {
+	console.log("FUNCTION CALL: clearCanvas()");
+
+	context.setTransform(1, 0, 0, 1, 0, 0); //Reset all context transforms
+	context.clearRect(0, 0, page.canvas.width, page.canvas.height); //Clear the entire canvas
+	context.beginPath(); //Start a new line path.
+
+}
+function setConstantContextTransforms() {
+	console.log("FUNCTION CALL: setConstantContextTransforms()");
+
+	context.transform(1, 0, 0, 1, page.canvas.width/2, page.canvas.height/2); //Put 0,0 in the center of the canvas
+	context.transform(zoom, 0, 0, zoom, 0, 0); //Scale the canvas
+	context.moveTo(0, 0);
+	context.lineTo(25, 25);
+	context.stroke();
+}
+
 function processFunctions() {
 	console.log("FUNCTION CALL: processFunctions()");
 	//This is the hard part XD
@@ -103,6 +125,7 @@ function processFunction(functionString) {
 }
 function recenter() {
 	zoom = 1;
+	//
 }
 
 function pannedGraph(delta) {
@@ -148,15 +171,11 @@ function keyup(event) {
 }
 function mousedown(event) {
 	mouseButtons[String(event.which)] = true;
-	if(mouseButtons["1"]) { //Left mouse button pressed
-		currentlyPanning = true;
-	}
+	currentlyPanning = mouseButtons["1"];
 }
 function mouseup(event) {
 	mouseButtons[String(event.which)] = false;
-	if(mouseButtons["1"]) { //Left mouse button released
-		currentlyPanning = false;
-	}
+	currentlyPanning = mouseButtons["1"];
 }
 function wheel(event) {
 	var wheelChange = event.deltaY;
