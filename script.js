@@ -159,6 +159,11 @@ function calculateViewBasis() {
 
 	//
 }
+function getLinIndVector(vecs) {
+	console.log("FUNCTION CALL: getLinIndVector("+vecs+")");
+
+	//
+}
 
 function pannedGraph(delta) {
 	console.log("FUNCTION CALL: pannedGraph("+delta+")");
