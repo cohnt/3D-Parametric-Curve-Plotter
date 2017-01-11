@@ -102,6 +102,7 @@ function updateGraphDisplay() {
 	clearCanvas();
 	setConstantContextTransforms();
 	updateContextZoom();
+	calculateViewBasis();
 }
 function clearCanvas() {
 	console.log("FUNCTION CALL: clearCanvas()");
@@ -152,6 +153,11 @@ function updateContextZoom() {
 	console.log("FUNCTION CALL: updateContextZoom()");
 
 	context.transform(zoom, 0, 0, zoom, 0, 0);
+}
+function calculateViewBasis() {
+	console.log("FUNCTION CALL: calculateViewBasis()");
+
+	//
 }
 
 function pannedGraph(delta) {
