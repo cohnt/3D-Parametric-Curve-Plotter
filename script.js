@@ -91,6 +91,7 @@ function loadInitialAndDefaults() {
 }
 function updateGraphComputations() {
 	console.log("FUNCTION CALL: updateGraphComputations()");
+
 	processFunctions();
 
 	updateGraphDisplay();
@@ -100,6 +101,7 @@ function updateGraphDisplay() {
 
 	clearCanvas();
 	setConstantContextTransforms();
+	updateContextZoom();
 }
 function clearCanvas() {
 	console.log("FUNCTION CALL: clearCanvas()");
@@ -116,6 +118,7 @@ function setConstantContextTransforms() {
 }
 function processFunctions() {
 	console.log("FUNCTION CALL: processFunctions()");
+	
 	//This is the hard part XD
 	xFunction = processFunction(page.xInputField.value);
 	yFunction = processFunction(page.yInputField.value);
@@ -123,14 +126,18 @@ function processFunctions() {
 }
 function processFunction(functionString) {
 	console.log("FUNCTION CALL: processFunction("+functionString+")");
+
 	var evalString = functionString.slice(0);
 }
 function recenter() {
+	console.log("FUNCTION CALL: recenter()");
+
 	zoom = 1;
 	//
 }
-
 function makeUnitVector(vec) {
+	console.log("FUNCTION CALL: makeUnitVector("+vec+")");
+
 	var squareSum = 0;
 	for(var i=0; i<vec.length; ++i) {
 		squareSum += Math.pow(vec[i], 2);
@@ -140,6 +147,11 @@ function makeUnitVector(vec) {
 		vec[i] *= (1/divide);
 	}
 	return vec;
+}
+function updateContextZoom() {
+	console.log("FUNCTION CALL: updateContextZoom()");
+
+	context.transform(zoom, 0, 0, zoom, 0, 0);
 }
 
 function pannedGraph(delta) {
