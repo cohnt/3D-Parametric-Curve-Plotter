@@ -9,7 +9,7 @@ var defaults = { //The defaults that the page loads when you first open it.
 	tmax: "4*pi",
 	tstep: "pi/64",
 	center: function() { return [0, 0, 0]; },
-	viewVector: function() { return [1/Math.sqrt(3), 1/Math.sqrt(3), 1/Math.sqrt(3)]; },
+	viewVector: function() { return [1, 1, 1]; },
 	zoom: 1
 };
 
@@ -23,7 +23,7 @@ var yFunction;
 var zFunction;
 var mouseLocation = [];
 var oldMouseLocation = [];
-var zoom = defaults.zoom;
+var zoom;
 var currentlyPanning = false;
 var currentlyRotating = false;
 var viewVector = [];
@@ -86,7 +86,8 @@ function loadInitialAndDefaults() {
 	page.tmaxInputField.value = defaults.tmax;
 	page.tstepInputField.value = defaults.tstep;
 	center = defaults.center();
-	viewVector = defaults.viewVector();
+	viewVector = makeUnitVector(defaults.viewVector());
+	zoom = defaults.zoom;
 }
 function updateGraphComputations() {
 	console.log("FUNCTION CALL: updateGraphComputations()");
@@ -106,7 +107,6 @@ function clearCanvas() {
 	context.setTransform(1, 0, 0, 1, 0, 0); //Reset all context transforms
 	context.clearRect(0, 0, page.canvas.width, page.canvas.height); //Clear the entire canvas
 	context.beginPath(); //Start a new line path.
-
 }
 function setConstantContextTransforms() {
 	console.log("FUNCTION CALL: setConstantContextTransforms()");
@@ -114,7 +114,6 @@ function setConstantContextTransforms() {
 	context.transform(1, 0, 0, 1, page.canvas.width/2, page.canvas.height/2); //Put 0,0 in the center of the canvas
 	context.transform(zoom, 0, 0, zoom, 0, 0); //Scale the canvas
 }
-
 function processFunctions() {
 	console.log("FUNCTION CALL: processFunctions()");
 	//This is the hard part XD
@@ -129,6 +128,18 @@ function processFunction(functionString) {
 function recenter() {
 	zoom = 1;
 	//
+}
+
+function makeUnitVector(vec) {
+	var squareSum = 0;
+	for(var i=0; i<vec.length; ++i) {
+		squareSum += Math.pow(vec[i], 2);
+	}
+	var divide = Math.sqrt(squareSum);
+	for(var i=0; i<vec.length; ++i) {
+		vec[i] *= (1/divide);
+	}
+	return vec;
 }
 
 function pannedGraph(delta) {
