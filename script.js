@@ -8,7 +8,8 @@ var defaults = { //The defaults that the page loads when you first open it.
 	tmin: "-4*pi",
 	tmax: "4*pi",
 	tstep: "pi/64",
-	center: [0, 0, 0],
+	center: function() { return [0, 0, 0]; },
+	viewVector: function() { return [1/Math.sqrt(3), 1/Math.sqrt(3), 1/Math.sqrt(3)]; },
 	zoom: 1
 };
 
@@ -25,6 +26,9 @@ var oldMouseLocation = [];
 var zoom = defaults.zoom;
 var currentlyPanning = false;
 var currentlyRotating = false;
+var viewVector = [];
+var viewBasis = [];
+var center = [];
 
 //Classes
 
@@ -81,6 +85,8 @@ function loadInitialAndDefaults() {
 	page.tminInputField.value = defaults.tmin;
 	page.tmaxInputField.value = defaults.tmax;
 	page.tstepInputField.value = defaults.tstep;
+	center = defaults.center();
+	viewVector = defaults.viewVector();
 }
 function updateGraphComputations() {
 	console.log("FUNCTION CALL: updateGraphComputations()");
@@ -107,9 +113,6 @@ function setConstantContextTransforms() {
 
 	context.transform(1, 0, 0, 1, page.canvas.width/2, page.canvas.height/2); //Put 0,0 in the center of the canvas
 	context.transform(zoom, 0, 0, zoom, 0, 0); //Scale the canvas
-	context.moveTo(0, 0);
-	context.lineTo(25, 25);
-	context.stroke();
 }
 
 function processFunctions() {
