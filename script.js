@@ -103,6 +103,7 @@ function updateGraphDisplay() {
 	setConstantContextTransforms();
 	updateContextZoom();
 	calculateViewBasis();
+	orthonormalizeViewBasis();
 }
 function clearCanvas() {
 	console.log("FUNCTION CALL: clearCanvas()");
@@ -189,6 +190,47 @@ function calculateViewBasis() {
 	console.log(viewVector);
 	console.log(basisVec1);
 	console.log(basisVec2);
+
+	viewBasis[0] = basisVec1.slice(0);
+	viewBasis[1] = basisVec2.slice(0);
+}
+function orthonormalizeViewBasis() {
+	console.log("FUNCTION CALL: orthonormalizeViewBasis()");
+
+	//Graham-Schmidt process, as explained here: https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process
+	//This is really nice for testing if this function worked: https://academo.org/demos/3d-vector-plotter/
+
+	var v1 = viewBasis[0];
+	var v2 = viewBasis[1];
+
+	var u1 = v1.slice(0);
+	var e1 = makeUnitVector(u1);
+
+	var u2 = [];
+	var proju1v2 = projUV(u1, v2);
+	for(var i=0; i<v2.length; ++i) {
+		u2[i] = v2[i] - proju1v2[i];
+	}
+	var e2 = makeUnitVector(u2);
+
+	viewBasis[0] = e1.slice(0);
+	viewBasis[1] = e2.slice(0);
+}
+function projUV(u, v) {
+	//The projection of v onto u
+	var output = u.slice(0);
+	var factor = dot(u, v)/dot(u, u);
+	for(var i=0; i<output.length; ++i) {
+		output[i] *= factor;
+	}
+	return output.slice(0);
+}
+function dot(a, b) {
+	var total = 0;
+	for(var i=0; i<a.length; ++i) {
+		total += a[i]*b[i];
+	}
+	return total;
 }
 
 function pannedGraph(delta) {
