@@ -86,7 +86,7 @@ function loadInitialAndDefaults() {
 	page.tmaxInputField.value = defaults.tmax;
 	page.tstepInputField.value = defaults.tstep;
 	center = defaults.center();
-	viewVector = makeUnitVector(defaults.viewVector());
+	viewVector = defaults.viewVector();
 	zoom = defaults.zoom;
 }
 function updateGraphComputations() {
@@ -157,12 +157,38 @@ function updateContextZoom() {
 function calculateViewBasis() {
 	console.log("FUNCTION CALL: calculateViewBasis()");
 
-	//
-}
-function getLinIndVector(vecs) {
-	console.log("FUNCTION CALL: getLinIndVector("+vecs+")");
+	var basisVec1 = [];
+	var basisVec2 = [];
+	
+	//If viewVector = [a, b, c], then the plane equation is ax+by+cz=0.
+	//This simplifies to x=-(by+cz)/a, giving the points (-(by+cz)/a, y, z), therefore giving the spanning vectors (-b/a, 1, 0) and (-c/a, 0, 1)
+	//                or y=-(ax+cz)/b                    (x, -(ax+cz)/b, z)                                        (1, -a/b, 0) and (0, -c/b, 1)
+	//                or z=-(ax+by)/c                    (x, y, -(ax+by)/c)                                        (1, 0, -a/c) and (0, 1, -b/c)
+	//http://math.stackexchange.com/questions/1702572/how-to-find-the-basis-of-a-plane-or-a-line
 
-	//
+	var a = viewVector[0];
+	var b = viewVector[1];
+	var c = viewVector[2];
+
+	if(a != 0) {
+		basisVec1 = [-b/a, 1, 0];
+		basisVec2 = [-c/a, 0, 1];
+	}
+	else if(b != 0) {
+		basisVec1 = [1, -a/b, 0];
+		basisVec2 = [0, -c/b, 1];
+	}
+	else if(c != 0) {
+		basisVec1 = [1, 0, -a/c];
+		basisVec2 = [0, 1, -b/c];
+	}
+	else {
+		throw "viewVector cannot be the zero vector!";
+	}
+
+	console.log(viewVector);
+	console.log(basisVec1);
+	console.log(basisVec2);
 }
 
 function pannedGraph(delta) {
