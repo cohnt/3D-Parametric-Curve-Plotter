@@ -108,6 +108,7 @@ function updateGraphDisplay() {
 	orthonormalizeViewBasis();
 
 	var axisPoints = getAxisPoints();
+	drawAxes(axisPoints);
 }
 function clearCanvas() {
 	console.log("FUNCTION CALL: clearCanvas()");
@@ -279,7 +280,7 @@ function getAxisPoints() {
 	var nextScreenPoint = [];
 	var difference = [];
 	for(var i=0; i<3; ++i) { //Iterating over each axis
-		for(var j=-1; j<=1; j+=2) { //Go in both the positive and negative direction
+		for(var j=1; j<=1; j+=2) { //Go in both the positive and negative direction
 			currentPoint = origin.slice(0);
 			currentScreenPoint = getScreenCoords(currentPoint);
 			points[i].push(currentScreenPoint);
@@ -316,6 +317,16 @@ function getAxisPoints() {
 function getScreenCoords(vec) {
 	//
 	return [compUV(viewBasis[0], vec), compUV(viewBasis[1], vec)];
+}
+function drawAxes(axes) {
+	for(var i=0; i<3; ++i) {
+		context.moveTo(axes[i][0][0], axes[i][0][1]);
+		for(var j=1; j<axes[i].length; ++j) {
+			context.lineTo(axes[i][j][0], axes[i][j][1]);
+			context.stroke();
+		}
+		context.beginPath();
+	}
 }
 
 function pannedGraph(delta) {
