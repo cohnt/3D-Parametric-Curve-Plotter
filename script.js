@@ -10,7 +10,8 @@ var defaults = { //The defaults that the page loads when you first open it.
 	tstep: "pi/64",
 	center: function() { return [0, 0, 0]; },
 	viewVector: function() { return [1, 1, 1]; },
-	zoom: 1
+	zoom: 1,
+	viewRotation: 0
 };
 
 //Global Variables
@@ -28,6 +29,7 @@ var currentlyPanning = false;
 var currentlyRotating = false;
 var viewVector = [];
 var viewBasis = [];
+var viewRotation;
 var center = [];
 
 //Classes
@@ -88,6 +90,7 @@ function loadInitialAndDefaults() {
 	center = defaults.center();
 	viewVector = defaults.viewVector();
 	zoom = defaults.zoom;
+	viewRotation = defaults.viewRotation;
 }
 function updateGraphComputations() {
 	console.log("FUNCTION CALL: updateGraphComputations()");
@@ -101,9 +104,10 @@ function updateGraphDisplay() {
 
 	clearCanvas();
 	setConstantContextTransforms();
-	updateContextZoom();
 	calculateViewBasis();
 	orthonormalizeViewBasis();
+
+	var axisPoints = getAxisPoints();
 }
 function clearCanvas() {
 	console.log("FUNCTION CALL: clearCanvas()");
@@ -117,6 +121,7 @@ function setConstantContextTransforms() {
 
 	context.transform(1, 0, 0, 1, page.canvas.width/2, page.canvas.height/2); //Put 0,0 in the center of the canvas
 	context.transform(zoom, 0, 0, zoom, 0, 0); //Scale the canvas
+	context.lineWidth = 1/zoom; //Keep the lines the same thickness.
 }
 function processFunctions() {
 	console.log("FUNCTION CALL: processFunctions()");
@@ -149,11 +154,6 @@ function makeUnitVector(vec) {
 		vec[i] *= (1/divide);
 	}
 	return vec;
-}
-function updateContextZoom() {
-	console.log("FUNCTION CALL: updateContextZoom()");
-
-	context.transform(zoom, 0, 0, zoom, 0, 0);
 }
 function calculateViewBasis() {
 	console.log("FUNCTION CALL: calculateViewBasis()");
@@ -217,7 +217,7 @@ function orthonormalizeViewBasis() {
 	viewBasis[1] = e2.slice(0);
 }
 function projUV(u, v) {
-	//The projection of v onto u
+	//The vector projection of v onto u
 	var output = u.slice(0);
 	var factor = dot(u, v)/dot(u, u);
 	for(var i=0; i<output.length; ++i) {
@@ -225,12 +225,97 @@ function projUV(u, v) {
 	}
 	return output.slice(0);
 }
+function compUV(u, v) {
+	//The component projection of v onto u
+	//https://en.wikipedia.org/wiki/Scalar_projection
+	return dot(u, v)/Math.sqrt(dot(u, u));
+}
 function dot(a, b) {
 	var total = 0;
 	for(var i=0; i<a.length; ++i) {
 		total += a[i]*b[i];
 	}
 	return total;
+}
+function getAxisPoints() {
+	console.log("FUNCTION CALL: getAxisPoints()");
+
+	var projCenterXY = getScreenCoords(center);
+
+	var xMin = projCenterXY[0] - ((page.canvas.width/2)/zoom);
+	var xMax = projCenterXY[0] + ((page.canvas.width/2)/zoom);
+	var yMin = projCenterXY[1] - ((page.canvas.height/2)/zoom);
+	var yMax = projCenterXY[1] + ((page.canvas.height/2)/zoom);
+
+	var points = [[], [], []];
+	var origin = [0, 0, 0];
+	var projOrigin = getScreenCoords(origin);
+	var xRelativeLocation; //-1 if it's less than the minimum, 0 if it's good, 1 if it's greater than the maximum.
+	var yRelativeLocation; //Ditto above. These are done with the screen location, to see where to draw the axes.
+
+	if(projOrigin[0] > xMax) {
+		xRelativeLocation = 1;
+	}
+	else if(projOrigin[0] < xMin) {
+		xRelativeLocation = -1;
+	}
+	else {
+		xRelativeLocation = 0;
+	}
+	if(projOrigin[1] > yMax) {
+		yRelativeLocation = 1;
+	}
+	else if(projOrigin[1] < yMin) {
+		yRelativeLocation = -1;
+	}
+	else {
+		yRelativeLocation = 0;
+	}
+
+	var finished = false;
+	var currentPoint = [];
+	var currentScreenPoint = [];
+	var nextPoint = [];
+	var nextScreenPoint = [];
+	var difference = [];
+	for(var i=0; i<3; ++i) { //Iterating over each axis
+		for(var j=-1; j<=1; j+=2) { //Go in both the positive and negative direction
+			currentPoint = origin.slice(0);
+			currentScreenPoint = getScreenCoords(currentPoint);
+			points[i].push(currentScreenPoint);
+			finished = false;
+			while(!finished) {
+				nextPoint = currentPoint.slice(0);
+				nextPoint[i] += j;
+				nextScreenPoint = getScreenCoords(nextPoint);
+				points[i].push(nextScreenPoint);
+
+				difference[0] = nextScreenPoint[0] - currentScreenPoint[0];
+				difference[1] = nextScreenPoint[1] - currentScreenPoint[1];
+
+				if((nextScreenPoint[0] > xMax) && (difference[0] >= 0)) {
+					finished = true;
+				}
+				else if((nextScreenPoint[0] < xMin) && (difference[0] <= 0)) {
+					finished = true;
+				}
+				else if((nextScreenPoint[1] > yMax) && (difference[1] >= 0)) {
+					finished = true;
+				}
+				else if((nextScreenPoint[1] < yMin) && (difference[1] <= 0)) {
+					finished = true;
+				}
+				currentPoint = nextPoint.slice(0);
+				currentScreenPoint = getScreenCoords(currentPoint);
+			}
+		}
+	}
+
+	return points;
+}
+function getScreenCoords(vec) {
+	//
+	return [compUV(viewBasis[0], vec), compUV(viewBasis[1], vec)];
 }
 
 function pannedGraph(delta) {
