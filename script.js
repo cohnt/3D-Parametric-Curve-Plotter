@@ -14,6 +14,7 @@ var defaults = { //The defaults that the page loads when you first open it.
 	viewRotation: 0,
 	maxPoints: 100
 };
+var axisColors = ["#ff0000", "#00ff00", "#0000ff"];
 
 //Global Variables
 var page = {};
@@ -32,6 +33,7 @@ var viewVector = [];
 var viewBasis = [];
 var viewRotation;
 var center = [];
+var front; //True if looking from the front, false if looking from the back.
 
 //Classes
 
@@ -106,12 +108,17 @@ function updateGraphDisplay() {
 	setConstantContextTransforms();
 	calculateViewBasis();
 	orthonormalizeViewBasis();
+	checkPlaneSide();
+
+	if(!front) {
+		context.transform(1, 0, 0, -1, 0, 0); //Flip the canvas horizontally and vertically.
+	}
 
 	var axisPoints = getAxisPoints();
 	TEMP = axisPoints.slice(0);
 	drawAxes(axisPoints);
 
-	drawViewVector(); //This is used for debugging purposes. Furthermore, you should never see this vector, as it should be perfectly edge-on.
+	//drawViewVector(); //This is used for debugging purposes. Furthermore, you should never see this vector, as it should be perfectly edge-on.
 }
 function clearCanvas() {
 	console.log("FUNCTION CALL: clearCanvas()");
@@ -181,11 +188,11 @@ function calculateViewBasis() {
 		basisVec2 = [-c/a, 0, 1];
 	}
 	else if(b != 0) {
-		basisVec1 = [1, -a/b, 0];
+		basisVec1 = [-1, a/b, 0];
 		basisVec2 = [0, -c/b, 1];
 	}
 	else if(c != 0) {
-		basisVec1 = [1, 0, -a/c];
+		basisVec1 = [-1, 0, a/c];
 		basisVec2 = [0, 1, -b/c];
 	}
 	else {
@@ -325,6 +332,7 @@ function getScreenCoords(vec) {
 }
 function drawAxes(axes) {
 	for(var i=0; i<3; ++i) {
+		context.strokeStyle = axisColors[i];
 		context.beginPath();
 		context.moveTo(axes[i][0][0], axes[i][0][1]);
 		for(var j=1; j<axes[i].length; ++j) {
@@ -333,6 +341,7 @@ function drawAxes(axes) {
 		}
 		context.beginPath();
 	}
+	context.strokeStyle = "#000000";
 }
 function drawViewVector() {
 	var startPoint = getScreenCoords(center);
@@ -347,6 +356,15 @@ function drawViewVector() {
 	context.moveTo(startPoint[0], startPoint[1]);
 	context.lineTo(endPoint[0], endPoint[1]);
 	context.stroke();
+}
+function checkPlaneSide() {
+	front = true;
+	for(var i=0; i<viewVector.length; ++i) {
+		if(viewVector[i] < 0) {
+			front = false;
+			break;
+		}
+	}
 }
 
 function pannedGraph(delta) {
