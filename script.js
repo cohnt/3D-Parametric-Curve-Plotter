@@ -9,7 +9,7 @@ var defaults = { //The defaults that the page loads when you first open it.
 	tmax: "4*pi",
 	tstep: "pi/64",
 	center: function() { return [0, 0, 0]; },
-	viewVector: function() { return [1, 1, 1]; },
+	viewVector: function() { return eval(prompt("viewVector")); },
 	zoom: 50,
 	viewRotation: 0,
 	maxPoints: 100
@@ -17,6 +17,7 @@ var defaults = { //The defaults that the page loads when you first open it.
 var axisColors = ["#ff0000", "#00ff00", "#0000ff"];
 var lightAxisColors = ["#ffaaaa", "#aaffaa", "#aaaaff"];
 var canvasBackgroundColor = "#dddddd";
+var showNegativeAxes = false;
 
 //Global Variables
 var page = {};
@@ -121,6 +122,7 @@ function updateGraphDisplay() {
 	drawAxes(axisPoints);
 
 	//drawViewVector(); //This is used for debugging purposes. Furthermore, you should never see this vector, as it should be perfectly edge-on.
+	drawBasisVectors(); //This is used for debugging purposes.
 }
 function clearCanvas() {
 	console.log("FUNCTION CALL: clearCanvas()");
@@ -192,11 +194,11 @@ function calculateViewBasis() {
 		basisVec2 = [-c/a, 0, 1];
 	}
 	else if(b != 0) {
-		basisVec1 = [-1, a/b, 0];
+		basisVec1 = [1, -a/b, 0];
 		basisVec2 = [0, -c/b, 1];
 	}
 	else if(c != 0) {
-		basisVec1 = [-1, 0, a/c];
+		basisVec1 = [1, 0, -a/c];
 		basisVec2 = [0, 1, -b/c];
 	}
 	else {
@@ -296,8 +298,9 @@ function getAxisPoints() {
 	var difference = [];
 	var maxPointCount = defaults.maxPoints * (defaults.zoom / zoom);
 	var currentPointCount;
+	var jEndVal = showNegativeAxes ? -1 : 1;
 	for(var i=0; i<3; ++i) { //Iterating over each axis
-		for(var j=1; j>=-1; j-=2) { //Go in both the positive and negative direction
+		for(var j=1; j>=jEndVal; j-=2) { //Go in both the positive and negative direction
 			currentPoint = origin.slice(0);
 			currentScreenPoint = getScreenCoords(currentPoint);
 			points[i].push(currentScreenPoint);
@@ -342,6 +345,8 @@ function getScreenCoords(vec) {
 	return [compUV(viewBasis[0], vec), compUV(viewBasis[1], vec)];
 }
 function drawAxes(axes) {
+	console.log("FUNCTION CALL: drawAxes("+axes+")");
+
 	for(var i=0; i<3; ++i) {
 		context.strokeStyle = axisColors[i];
 		context.beginPath();
@@ -361,6 +366,8 @@ function drawAxes(axes) {
 	context.strokeStyle = "#000000";
 }
 function drawViewVector() {
+	console.log("FUNCTION CALL: drawViewVector()");
+
 	var startPoint = getScreenCoords(center);
 
 	var vec = [];
@@ -374,7 +381,33 @@ function drawViewVector() {
 	context.lineTo(endPoint[0], endPoint[1]);
 	context.stroke();
 }
+function drawBasisVectors() {
+	console.log("FUNCTION CALL: drawBasisVectors()");
+
+	var startPoint = getScreenCoords(center);
+
+	var vecs = [];
+	for(var i=0; i<viewBasis.length; ++i) {
+		vecs.push(viewBasis[i].slice(0));
+		for(var j=0; j<center.length; ++j) {
+			vecs[i][j] += center[j];
+		}
+		vecs[i] = getScreenCoords(vecs[i]);
+	}
+
+	context.beginPath();
+	context.moveTo(startPoint[0], startPoint[1]);
+	context.lineTo(vecs[0][0], vecs[0][1]);
+	context.stroke();
+
+	context.beginPath();
+	context.moveTo(startPoint[0], startPoint[1]);
+	context.lineTo(vecs[1][0], vecs[1][1]);
+	context.stroke();
+}
 function checkPlaneSide() {
+	console.log("FUNCTION CALL: checkPlaneSide()");
+
 	front = true;
 	for(var i=0; i<viewVector.length; ++i) {
 		if(viewVector[i] < 0) {
