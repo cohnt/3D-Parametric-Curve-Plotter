@@ -295,13 +295,15 @@ function getAxisPoints() {
 	var nextScreenPoint = [];
 	var difference = [];
 	var maxPointCount = defaults.maxPoints * (defaults.zoom / zoom);
+	var currentPointCount;
 	for(var i=0; i<3; ++i) { //Iterating over each axis
 		for(var j=1; j>=-1; j-=2) { //Go in both the positive and negative direction
 			currentPoint = origin.slice(0);
 			currentScreenPoint = getScreenCoords(currentPoint);
 			points[i].push(currentScreenPoint);
 			finished = false;
-			while((!finished) && (points[i].length <= maxPointCount)) {
+			currentPointCount = 0;
+			while((!finished) && (currentPointCount <= maxPointCount)) {
 				nextPoint = currentPoint.slice(0);
 				nextPoint[i] += j;
 				nextScreenPoint = getScreenCoords(nextPoint);
@@ -324,6 +326,8 @@ function getAxisPoints() {
 				}
 				currentPoint = nextPoint.slice(0);
 				currentScreenPoint = getScreenCoords(currentPoint);
+
+				++currentPointCount;
 			}
 			if(j == 1) {
 				points[i].push("FLIP");
