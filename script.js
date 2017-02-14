@@ -11,7 +11,8 @@ var defaults = { //The defaults that the page loads when you first open it.
 	center: function() { return [0, 0, 0]; },
 	viewVector: function() { return [1, 1, 1]; },
 	zoom: 50,
-	viewRotation: 0
+	viewRotation: 0,
+	maxPoints: 100
 };
 
 //Global Variables
@@ -110,6 +111,8 @@ function updateGraphDisplay() {
 	var axisPoints = getAxisPoints();
 	TEMP = axisPoints.slice(0);
 	drawAxes(axisPoints);
+
+	drawViewVector(); //This is used for debugging purposes. Furthermore, you should never see this vector, as it should be perfectly edge-on.
 }
 function clearCanvas() {
 	console.log("FUNCTION CALL: clearCanvas()");
@@ -280,13 +283,14 @@ function getAxisPoints() {
 	var nextPoint = [];
 	var nextScreenPoint = [];
 	var difference = [];
+	var maxPointCount = defaults.maxPoints * (defaults.zoom / zoom);
 	for(var i=0; i<3; ++i) { //Iterating over each axis
 		for(var j=1; j<=1; j+=2) { //Go in both the positive and negative direction
 			currentPoint = origin.slice(0);
 			currentScreenPoint = getScreenCoords(currentPoint);
 			points[i].push(currentScreenPoint);
 			finished = false;
-			while(!finished) {
+			while((!finished) && (points[i].length <= maxPointCount)) {
 				nextPoint = currentPoint.slice(0);
 				nextPoint[i] += j;
 				nextScreenPoint = getScreenCoords(nextPoint);
@@ -329,6 +333,20 @@ function drawAxes(axes) {
 		}
 		context.beginPath();
 	}
+}
+function drawViewVector() {
+	var startPoint = getScreenCoords(center);
+
+	var vec = [];
+	for(var i=0; i<center.length; ++i) {
+		vec.push(center[i] + viewVector[i]);
+	}
+	var endPoint = getScreenCoords(vec);
+
+	context.beginPath();
+	context.moveTo(startPoint[0], startPoint[1]);
+	context.lineTo(endPoint[0], endPoint[1]);
+	context.stroke();
 }
 
 function pannedGraph(delta) {
