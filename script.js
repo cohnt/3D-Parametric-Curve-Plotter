@@ -15,6 +15,7 @@ var defaults = { //The defaults that the page loads when you first open it.
 	maxPoints: 100
 };
 var axisColors = ["#ff0000", "#00ff00", "#0000ff"];
+var lightAxisColors = ["#ffaaaa", "#aaffaa", "#aaaaff"];
 
 //Global Variables
 var page = {};
@@ -292,7 +293,7 @@ function getAxisPoints() {
 	var difference = [];
 	var maxPointCount = defaults.maxPoints * (defaults.zoom / zoom);
 	for(var i=0; i<3; ++i) { //Iterating over each axis
-		for(var j=1; j<=1; j+=2) { //Go in both the positive and negative direction
+		for(var j=1; j>=-1; j-=2) { //Go in both the positive and negative direction
 			currentPoint = origin.slice(0);
 			currentScreenPoint = getScreenCoords(currentPoint);
 			points[i].push(currentScreenPoint);
@@ -321,6 +322,9 @@ function getAxisPoints() {
 				currentPoint = nextPoint.slice(0);
 				currentScreenPoint = getScreenCoords(currentPoint);
 			}
+			if(j == 1) {
+				points[i].push("FLIP");
+			}
 		}
 	}
 
@@ -336,8 +340,14 @@ function drawAxes(axes) {
 		context.beginPath();
 		context.moveTo(axes[i][0][0], axes[i][0][1]);
 		for(var j=1; j<axes[i].length; ++j) {
-			context.lineTo(axes[i][j][0], axes[i][j][1]);
-			context.stroke();
+			if(axes[i][j] == "FLIP") {
+				context.strokeStyle = lightAxisColors[i];
+				context.beginPath();
+			}
+			else {
+				context.lineTo(axes[i][j][0], axes[i][j][1]);
+				context.stroke();
+			}
 		}
 		context.beginPath();
 	}
