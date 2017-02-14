@@ -10,7 +10,7 @@ var defaults = { //The defaults that the page loads when you first open it.
 	tstep: "pi/64",
 	center: function() { return [0, 0, 0]; },
 	viewVector: function() { return [1, 1, 1]; },
-	zoom: 1,
+	zoom: 50,
 	viewRotation: 0
 };
 
@@ -108,6 +108,7 @@ function updateGraphDisplay() {
 	orthonormalizeViewBasis();
 
 	var axisPoints = getAxisPoints();
+	TEMP = axisPoints.slice(0);
 	drawAxes(axisPoints);
 }
 function clearCanvas() {
@@ -321,6 +322,7 @@ function getScreenCoords(vec) {
 function drawAxes(axes) {
 	for(var i=0; i<3; ++i) {
 		context.moveTo(axes[i][0][0], axes[i][0][1]);
+		context.beginPath();
 		for(var j=1; j<axes[i].length; ++j) {
 			context.lineTo(axes[i][j][0], axes[i][j][1]);
 			context.stroke();
