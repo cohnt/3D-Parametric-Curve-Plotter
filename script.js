@@ -53,7 +53,6 @@ function setup() {
 	page.zValid = document.getElementById("zValid");
 	page.canvas = document.getElementById("graph");
 
-	page.canvas.style.transform = "matrix(0, -1, 1, 0, 0, 0)"; //Flip the entire canvas, so an increase in y is up instead of down.
 	context = page.canvas.getContext("2d");
 
 	page.xInputField.addEventListener("change", processFunctions);
@@ -126,6 +125,7 @@ function setConstantContextTransforms() {
 
 	context.transform(1, 0, 0, 1, page.canvas.width/2, page.canvas.height/2); //Put 0,0 in the center of the canvas
 	context.transform(zoom, 0, 0, zoom, 0, 0); //Scale the canvas
+	context.transform(1, 0, 0, -1, 0, 0); //Flip the canvas vertically.
 	context.lineWidth = 1/zoom; //Keep the lines the same thickness.
 }
 function processFunctions() {
