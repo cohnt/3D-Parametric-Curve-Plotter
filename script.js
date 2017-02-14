@@ -16,6 +16,7 @@ var defaults = { //The defaults that the page loads when you first open it.
 };
 var axisColors = ["#ff0000", "#00ff00", "#0000ff"];
 var lightAxisColors = ["#ffaaaa", "#aaffaa", "#aaaaff"];
+var canvasBackgroundColor = "#dddddd";
 
 //Global Variables
 var page = {};
@@ -126,6 +127,8 @@ function clearCanvas() {
 
 	context.setTransform(1, 0, 0, 1, 0, 0); //Reset all context transforms
 	context.clearRect(0, 0, page.canvas.width, page.canvas.height); //Clear the entire canvas
+	context.fillStyle = canvasBackgroundColor;
+	context.fillRect(0, 0, page.canvas.width, page.canvas.height);
 	context.beginPath(); //Start a new line path.
 }
 function setConstantContextTransforms() {
