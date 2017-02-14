@@ -321,8 +321,8 @@ function getScreenCoords(vec) {
 }
 function drawAxes(axes) {
 	for(var i=0; i<3; ++i) {
-		context.moveTo(axes[i][0][0], axes[i][0][1]);
 		context.beginPath();
+		context.moveTo(axes[i][0][0], axes[i][0][1]);
 		for(var j=1; j<axes[i].length; ++j) {
 			context.lineTo(axes[i][j][0], axes[i][j][1]);
 			context.stroke();
