@@ -44,6 +44,7 @@ var viewBasis = [];
 var viewRotation;
 var center = [];
 var front; //True if looking from the front, false if looking from the back.
+var userFunction = []; //Array of length 3, which each entry being a function you can call.
 
 //Classes
 
@@ -159,8 +160,11 @@ function processFunction(functionString) {
 function recenter() {
 	console.log("FUNCTION CALL: recenter()");
 
-	zoom = 1;
-	//
+	zoom = defaults.zoom;
+	viewVector = defaults.viewVector();
+	viewBasis = defaults.viewBasis();
+
+	updateGraphDisplay();
 }
 function makeUnitVector(vec) {
 	//return scalarVec(Math.sqrt(dot(vec, vec)), vec);
