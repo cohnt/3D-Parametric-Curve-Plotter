@@ -19,11 +19,12 @@ var defaults = { //The defaults that the page loads when you first open it.
 	viewRotation: 0,
 	maxPoints: 5
 };
-var axisColors = ["#ff0000", "#00ff00", "#0000ff"];
-var lightAxisColors = ["#ffaaaa", "#aaffaa", "#aaaaff"];
+var axisColors = ["#ff0000", "#00cc00", "#0000ff"];
+var lightAxisColors = ["#ffaaaa", "#aaccaa", "#aaaaff"];
 var canvasBackgroundColor = "#dddddd";
 var showNegativeAxes = true;
 var dragRotatingConstant = 1/100; //This constant slows down the rate that dragging rotates the graph.
+var axesStrokeConstant = 2; //Make the axis lines thicker than default.
 
 //Global Variables
 var page = {};
@@ -123,7 +124,7 @@ function updateGraphDisplay() {
 	drawAxes(axisPoints);
 
 	//drawViewVector(); //This is used for debugging purposes. Furthermore, you should never see this vector, as it should be perfectly edge-on.
-	drawBasisVectors(); //This is used for debugging purposes.
+	//drawBasisVectors(); //This is used for debugging purposes.
 }
 function clearCanvas() {
 	console.log("FUNCTION CALL: clearCanvas()");
@@ -338,6 +339,8 @@ function getScreenCoords(vec) {
 function drawAxes(axes) {
 	console.log("FUNCTION CALL: drawAxes("+axes+")");
 
+	context.lineWidth *= axesStrokeConstant;
+
 	for(var i=0; i<3; ++i) {
 		context.strokeStyle = axisColors[i];
 		context.beginPath();
@@ -355,6 +358,7 @@ function drawAxes(axes) {
 		context.beginPath();
 	}
 	context.strokeStyle = "#000000";
+	context.lineWidth /= axesStrokeConstant;
 }
 function drawViewVector() {
 	console.log("FUNCTION CALL: drawViewVector()");
