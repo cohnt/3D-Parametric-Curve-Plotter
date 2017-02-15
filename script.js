@@ -25,6 +25,9 @@ var canvasBackgroundColor = "#dddddd";
 var showNegativeAxes = true;
 var dragRotatingConstant = 1/100; //This constant slows down the rate that dragging rotates the graph.
 var axesStrokeConstant = 2; //Make the axis lines thicker than default.
+var debugModeAreaLineBreaks = 1; //The number of line breaks above the debug area.
+var mouseDeltasToKeep = 10; //How many of the last mouse movements to keep recorded for panning/rotating.
+var debugMode = true;
 
 //Global Variables
 var page = {};
@@ -45,6 +48,7 @@ var viewRotation;
 var center = [];
 var front; //True if looking from the front, false if looking from the back.
 var userFunction = []; //Array of length 3, which each entry being a function you can call.
+var keptMouseDeltas = [];
 
 //Classes
 
@@ -77,10 +81,33 @@ function setup() {
 	page.tstepInputField.addEventListener("change", updateGraphComputations);
 	page.recenterButton.addEventListener("click", recenter);
 
+	if(debugMode) {
+		debugSetup();
+	}
+
 	mouseAndKeyboardInputSetup();
 
 	loadInitialAndDefaults();
 	window.setTimeout(updateGraphComputations, 0);
+}
+function debugSetup() {
+	console.log("FUNCTION CALL: debugSetup()");
+
+	var lineBreak;
+	for(var i=0; i<debugModeAreaLineBreaks; ++i) {
+		lineBreak = document.createElement("br");
+		document.body.appendChild(lineBreak);
+	}
+
+	var debugArea = document.createElement("div");
+	debugArea.setAttribute("id", "debugArea");
+	var mouseDelta = document.createElement("div");
+	mouseDelta.setAttribute("id", "mouseDeltaCont");
+	debugArea.appendChild(mouseDelta);
+	document.body.appendChild(debugArea);
+
+	page.debugArea = document.getElementById("debugArea");
+	page.mouseDeltaCont = document.getElementById("mouseDeltaCont");
 }
 function mouseAndKeyboardInputSetup() {
 	console.log("FUNCTION CALL: mouseAndKeyboardInputSetup()");
@@ -125,7 +152,25 @@ function updateGraphDisplay() {
 	drawAxes(axisPoints);
 
 	//drawViewVector(); //This is used for debugging purposes. Furthermore, you should never see this vector, as it should be perfectly edge-on.
-	//drawBasisVectors(); //This is used for debugging purposes.
+	drawBasisVectors(); //This is used for debugging purposes.
+
+	updateDebugDisplay();
+}
+function updateDebugDisplay() {
+	console.log("FUNCTION CALL: updateDebugDisplay()");
+
+	if(page.mouseDeltaCont.childNodes.length >= 2*mouseDeltasToKeep) {
+		page.mouseDeltaCont.removeChild(page.mouseDeltaCont.childNodes[page.mouseDeltaCont.childNodes.length-1]);
+		page.mouseDeltaCont.removeChild(page.mouseDeltaCont.childNodes[page.mouseDeltaCont.childNodes.length-1]);
+	}
+
+	var lastMouseDelta = document.createElement("pre");
+	var data = document.createTextNode(String(keptMouseDeltas[keptMouseDeltas.length-1]));
+	lastMouseDelta.appendChild(data);
+	var lineBreak = document.createElement("br");
+
+	page.mouseDeltaCont.insertBefore(lineBreak, page.mouseDeltaCont.childNodes[0]);
+	page.mouseDeltaCont.insertBefore(lastMouseDelta, page.mouseDeltaCont.childNodes[0]);
 }
 function clearCanvas() {
 	console.log("FUNCTION CALL: clearCanvas()");
@@ -435,6 +480,14 @@ function mouseMoved(event) {
 	else if(currentlyRotating) {
 		rotatedGraph(delta);
 	}
+
+	if(currentlyRotating || currentlyPanning) {
+		keptMouseDeltas.push(delta);
+		if(keptMouseDeltas.length > mouseDeltasToKeep) {
+			keptMouseDeltas.splice(0, 1);
+		}
+	}
+
 	oldMouseLocation[0] = mouseLocation[0];
 	oldMouseLocation[1] = mouseLocation[1];
 }
