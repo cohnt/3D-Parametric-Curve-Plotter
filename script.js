@@ -151,9 +151,6 @@ function updateGraphDisplay() {
 	TEMP = axisPoints.slice(0);
 	drawAxes(axisPoints);
 
-	//drawViewVector(); //This is used for debugging purposes. Furthermore, you should never see this vector, as it should be perfectly edge-on.
-	//drawBasisVectors(); //This is used for debugging purposes.
-
 	updateDebugDisplay();
 }
 function updateDebugDisplay() {
@@ -171,6 +168,9 @@ function updateDebugDisplay() {
 
 	page.mouseDeltaCont.insertBefore(lineBreak, page.mouseDeltaCont.childNodes[0]);
 	page.mouseDeltaCont.insertBefore(lastMouseDelta, page.mouseDeltaCont.childNodes[0]);
+
+	drawViewVector(); //This is used for debugging purposes. Furthermore, you should never see this vector, as it should be perfectly edge-on.
+	drawBasisVectors(); //This is used for debugging purposes.
 }
 function clearCanvas() {
 	console.log("FUNCTION CALL: clearCanvas()");
