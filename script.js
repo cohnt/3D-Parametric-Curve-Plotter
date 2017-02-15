@@ -18,6 +18,7 @@ var axisColors = ["#ff0000", "#00ff00", "#0000ff"];
 var lightAxisColors = ["#ffaaaa", "#aaffaa", "#aaaaff"];
 var canvasBackgroundColor = "#dddddd";
 var showNegativeAxes = false;
+var dragRotatingConstant = 1/10; //This constant slows down the rate that dragging rotates the graph.
 
 //Global Variables
 var page = {};
@@ -417,13 +418,20 @@ function checkPlaneSide() {
 	}
 }
 
-function pannedGraph(delta) {
-	console.log("FUNCTION CALL: pannedGraph("+delta+")");
+function pannedGraph(d) {
+	console.log("FUNCTION CALL: pannedGraph("+d+")");
 
 	updateGraphDisplay();
 }
-function rotatedGraph(delta) {
-	console.log("FUNCTION CALL: rotatedGraph("+delta+")");
+function rotatedGraph(d) {
+	console.log("FUNCTION CALL: rotatedGraph("+d+")");
+
+	viewVector[0] += d[0]*viewBasis[0][0]*dragRotatingConstant;
+	viewVector[0] += d[1]*viewBasis[1][0]*dragRotatingConstant;
+	viewVector[1] += d[0]*viewBasis[0][1]*dragRotatingConstant;
+	viewVector[1] += d[1]*viewBasis[1][1]*dragRotatingConstant;
+	viewVector[2] += d[0]*viewBasis[0][2]*dragRotatingConstant;
+	viewVector[2] += d[1]*viewBasis[1][2]*dragRotatingConstant;
 
 	updateGraphDisplay();
 }
@@ -431,9 +439,13 @@ function mouseMoved(event) {
 	mouseLocation[0] = event.clientX;
 	mouseLocation[1] = event.clientY;
 
-	var delta = [];
-	delta[0] = mouseLocation[0] - oldMouseLocation[0];
-	delta[1] = mouseLocation[1] - oldMouseLocation[1];
+	var delta = [0, 0];
+	delta[0] += (mouseLocation[0] - oldMouseLocation[0]);
+	delta[1] += (mouseLocation[1] - oldMouseLocation[1]);
+
+	currentlyPanning = mouseButtons["1"];
+	currentlyRotating = keys["16"];
+
 	//Panning takes precedence over rotating.
 	if(currentlyPanning) {
 		pannedGraph(delta);
@@ -445,26 +457,20 @@ function mouseMoved(event) {
 	oldMouseLocation[1] = mouseLocation[1];
 }
 function keydown(event) {
+	//
 	keys[String(event.which)] = true;
-	if(keys["16"]) { //Shift key pressed
-		currentlyRotating = true;
-		oldMouseLocation[0] = event.clientX;
-		oldMouseLocation[1] = event.clientY;
-	}
 }
 function keyup(event) {
+	//
 	keys[String(event.which)] = false;
-	if(keys["16"]) { //Shift key released
-		currentlyRotating = false;
-	}
 }
 function mousedown(event) {
+	//
 	mouseButtons[String(event.which)] = true;
-	currentlyPanning = mouseButtons["1"];
 }
 function mouseup(event) {
+	//
 	mouseButtons[String(event.which)] = false;
-	currentlyPanning = mouseButtons["1"];
 }
 function wheel(event) {
 	var wheelChange = event.deltaY;
