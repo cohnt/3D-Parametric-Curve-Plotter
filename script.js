@@ -26,7 +26,7 @@ var showNegativeAxes = true;
 var dragRotatingConstant = 1/100; //This constant slows down the rate that dragging rotates the graph.
 var axesStrokeConstant = 2; //Make the axis lines thicker than default.
 var debugModeAreaLineBreaks = 1; //The number of line breaks above the debug area.
-var mouseDeltasToKeep = 10; //How many of the last mouse movements to keep recorded for panning/rotating.
+var mouseDeltasToKeep = 8; //How many of the last mouse movements to keep recorded for panning/rotating.
 var debugMode = true;
 
 //Global Variables
