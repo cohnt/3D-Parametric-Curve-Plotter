@@ -10,6 +10,11 @@ var defaults = { //The defaults that the page loads when you first open it.
 	tstep: "pi/64",
 	center: function() { return [0, 0, 0]; },
 	viewVector: function() { return [1, 1, 1]; },
+	viewBasis: function() {
+		var foo = Math.sqrt(2);
+		var bar = Math.sqrt(1.5);
+		return [[-1/foo, 1/foo, 0], [-0.5/bar, -0.5/bar, 1/bar]];
+	},
 	zoom: 50,
 	viewRotation: 0,
 	maxPoints: 5
@@ -17,7 +22,7 @@ var defaults = { //The defaults that the page loads when you first open it.
 var axisColors = ["#ff0000", "#00ff00", "#0000ff"];
 var lightAxisColors = ["#ffaaaa", "#aaffaa", "#aaaaff"];
 var canvasBackgroundColor = "#dddddd";
-var showNegativeAxes = false;
+var showNegativeAxes = true;
 var dragRotatingConstant = 1/100; //This constant slows down the rate that dragging rotates the graph.
 
 //Global Variables
@@ -95,6 +100,7 @@ function loadInitialAndDefaults() {
 	page.tstepInputField.value = defaults.tstep;
 	center = defaults.center();
 	viewVector = defaults.viewVector();
+	viewBasis = defaults.viewBasis();
 	zoom = defaults.zoom;
 	viewRotation = defaults.viewRotation;
 }
@@ -110,7 +116,6 @@ function updateGraphDisplay() {
 
 	clearCanvas();
 	setConstantContextTransforms();
-	calculateViewBasis();
 	orthonormalizeViewBasis();
 
 	var axisPoints = getAxisPoints();
@@ -157,7 +162,7 @@ function recenter() {
 	//
 }
 function makeUnitVector(vec) {
-	console.log("FUNCTION CALL: makeUnitVector("+vec+")");
+	//return scalarVec(Math.sqrt(dot(vec, vec)), vec);
 
 	var squareSum = 0;
 	for(var i=0; i<vec.length; ++i) {
@@ -169,66 +174,35 @@ function makeUnitVector(vec) {
 	}
 	return vec;
 }
-function calculateViewBasis() {
-	console.log("FUNCTION CALL: calculateViewBasis()");
-
-	var basisVec1 = [];
-	var basisVec2 = [];
-	
-	//If viewVector = [a, b, c], then the plane equation is ax+by+cz=0.
-	//This simplifies to x=-(by+cz)/a, giving the points (-(by+cz)/a, y, z), therefore giving the spanning vectors (-b/a, 1, 0) and (-c/a, 0, 1)
-	//                or y=-(ax+cz)/b                    (x, -(ax+cz)/b, z)                                        (1, -a/b, 0) and (0, -c/b, 1)
-	//                or z=-(ax+by)/c                    (x, y, -(ax+by)/c)                                        (1, 0, -a/c) and (0, 1, -b/c)
-	//http://math.stackexchange.com/questions/1702572/how-to-find-the-basis-of-a-plane-or-a-line
-
-	var a = viewVector[0];
-	var b = viewVector[1];
-	var c = viewVector[2];
-
-	if(a != 0) {
-		basisVec1 = [-b/a, 1, 0];
-		basisVec2 = [-c/a, 0, 1];
-	}
-	else if(b != 0) {
-		basisVec1 = [1, -a/b, 0];
-		basisVec2 = [0, -c/b, 1];
-	}
-	else if(c != 0) {
-		basisVec1 = [1, 0, -a/c];
-		basisVec2 = [0, 1, -b/c];
-	}
-	else {
-		throw "viewVector cannot be the zero vector!";
-	}
-
-	console.log(viewVector);
-	console.log(basisVec1);
-	console.log(basisVec2);
-
-	viewBasis[0] = basisVec1.slice(0);
-	viewBasis[1] = basisVec2.slice(0);
-}
 function orthonormalizeViewBasis() {
 	console.log("FUNCTION CALL: orthonormalizeViewBasis()");
 
 	//Graham-Schmidt process, as explained here: https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process
+	//Actually sort done with QR decomposition.
 	//This is really nice for testing if this function worked: https://academo.org/demos/3d-vector-plotter/
 
-	var v1 = viewBasis[0];
-	var v2 = viewBasis[1];
+	var v1 = viewVector.slice(0);
+	var v2 = viewBasis[0].slice(0);
+	var v3 = viewBasis[1].slice(0);
 
-	var u1 = v1.slice(0);
-	var e1 = makeUnitVector(u1);
+	var r11 = magnitude(v1);
+	var u1 = scalarVec(1/r11, v1);
 
-	var u2 = [];
-	var proju1v2 = projUV(u1, v2);
-	for(var i=0; i<v2.length; ++i) {
-		u2[i] = v2[i] - proju1v2[i];
-	}
-	var e2 = makeUnitVector(u2);
+	var r12 = dot(u1, v2);
+	var v2Perp = addVec(v2, scalarVec(-1, scalarVec(r12, u1)));
+	console.log(scalarVec(-1, scalarVec(r12, u1)));
+	var r22 = magnitude(v2Perp);
+	var u2 = scalarVec(1/r22, v2Perp);
 
-	viewBasis[0] = e1.slice(0);
-	viewBasis[1] = e2.slice(0);
+	var r13 = dot(u1, v3);
+	var r23 = dot(u2, v3);
+	var v3Perp = addVec(v3, addVec(scalarVec(-1, scalarVec(r13, u1)), scalarVec(-1, scalarVec(r23, u2))));
+	var r33 = magnitude(v3Perp);
+	var u3 = scalarVec(1/r33, v3Perp);
+
+	viewVector = u1.slice(0);
+	viewBasis[0] = u2.slice(0);
+	viewBasis[1] = u3.slice(0);
 }
 function projUV(u, v) {
 	//The vector projection of v onto u
@@ -250,6 +224,27 @@ function dot(a, b) {
 		total += a[i]*b[i];
 	}
 	return total;
+}
+function magnitude(v) {
+	var sum = 0;
+	for(var i=0; i<v.length; ++i) {
+		sum += Math.pow(v[i], 2);
+	}
+	return Math.sqrt(sum);
+}
+function scalarVec(s, v) {
+	var newVec = [0, 0, 0];
+	for(var i=0; i<v.length; ++i) {
+		newVec[i] = v[i] * s;
+	}
+	return newVec.slice(0);
+}
+function addVec(v1, v2) {
+	var newV = [0, 0, 0];
+	for(var i=0; i<v1.length; ++i) {
+		newV[i] = v1[i] + v2[i];
+	}
+	return newV.slice(0);
 }
 function getAxisPoints() {
 	console.log("FUNCTION CALL: getAxisPoints()");
@@ -410,12 +405,16 @@ function pannedGraph(d) {
 function rotatedGraph(d) {
 	console.log("FUNCTION CALL: rotatedGraph("+d+")");
 
-	viewVector[0] += d[0]*viewBasis[0][0]*dragRotatingConstant*-1;
-	viewVector[0] += d[1]*viewBasis[1][0]*dragRotatingConstant;
-	viewVector[1] += d[0]*viewBasis[0][1]*dragRotatingConstant*-1;
-	viewVector[1] += d[1]*viewBasis[1][1]*dragRotatingConstant;
-	viewVector[2] += d[0]*viewBasis[0][2]*dragRotatingConstant*-1;
-	viewVector[2] += d[1]*viewBasis[1][2]*dragRotatingConstant;
+	var d3 = [0, 0, 0];
+	for(var i=0; i<d3.length; ++i) {
+		d3[i] += -1*d[0]*viewBasis[0][i];
+		d3[i] += d[1]*viewBasis[1][i];
+		d3[i] *= dragRotatingConstant;
+	}
+
+	for(var i=0; i<d3.length; ++i) {
+		viewVector[i] += d3[i];
+	}
 
 	updateGraphDisplay();
 }
