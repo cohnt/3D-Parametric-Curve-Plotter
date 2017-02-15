@@ -245,7 +245,7 @@ function addVec(v1, v2) {
 function getAxisPoints() {
 	console.log("FUNCTION CALL: getAxisPoints()");
 
-	var projCenterXY = getScreenCoords(center);
+	var projCenterXY = projectOntoScreen(center);
 
 	var xMin = projCenterXY[0] - ((page.canvas.width/2)/zoom);
 	var xMax = projCenterXY[0] + ((page.canvas.width/2)/zoom);
@@ -254,7 +254,7 @@ function getAxisPoints() {
 
 	var points = [[], [], []];
 	var origin = [0, 0, 0];
-	var projOrigin = getScreenCoords(origin);
+	var projOrigin = projectOntoScreen(origin);
 	var xRelativeLocation; //-1 if it's less than the minimum, 0 if it's good, 1 if it's greater than the maximum.
 	var yRelativeLocation; //Ditto above. These are done with the screen location, to see where to draw the axes.
 
@@ -289,14 +289,14 @@ function getAxisPoints() {
 	for(var i=0; i<3; ++i) { //Iterating over each axis
 		for(var j=1; j>=jEndVal; j-=2) { //Go in both the positive and negative direction
 			currentPoint = origin.slice(0);
-			currentScreenPoint = getScreenCoords(currentPoint);
+			currentScreenPoint = projectOntoScreen(currentPoint);
 			points[i].push(currentScreenPoint);
 			finished = false;
 			currentPointCount = 0;
 			while((!finished) && (currentPointCount <= maxPointCount)) {
 				nextPoint = currentPoint.slice(0);
 				nextPoint[i] += j;
-				nextScreenPoint = getScreenCoords(nextPoint);
+				nextScreenPoint = projectOntoScreen(nextPoint);
 				points[i].push(nextScreenPoint);
 
 				difference[0] = nextScreenPoint[0] - currentScreenPoint[0];
@@ -315,7 +315,7 @@ function getAxisPoints() {
 					finished = true;
 				}
 				currentPoint = nextPoint.slice(0);
-				currentScreenPoint = getScreenCoords(currentPoint);
+				currentScreenPoint = projectOntoScreen(currentPoint);
 
 				++currentPointCount;
 			}
@@ -327,7 +327,7 @@ function getAxisPoints() {
 
 	return points;
 }
-function getScreenCoords(vec) {
+function projectOntoScreen(vec) {
 	//
 	return [compUV(viewBasis[0], vec), compUV(viewBasis[1], vec)];
 }
@@ -358,13 +358,13 @@ function drawAxes(axes) {
 function drawViewVector() {
 	console.log("FUNCTION CALL: drawViewVector()");
 
-	var startPoint = getScreenCoords(center);
+	var startPoint = projectOntoScreen(center);
 
 	var vec = [];
 	for(var i=0; i<center.length; ++i) {
 		vec.push(center[i] + viewVector[i]);
 	}
-	var endPoint = getScreenCoords(vec);
+	var endPoint = projectOntoScreen(vec);
 
 	context.beginPath();
 	context.moveTo(startPoint[0], startPoint[1]);
@@ -374,7 +374,7 @@ function drawViewVector() {
 function drawBasisVectors() {
 	console.log("FUNCTION CALL: drawBasisVectors()");
 
-	var startPoint = getScreenCoords(center);
+	var startPoint = projectOntoScreen(center);
 
 	var vecs = [];
 	for(var i=0; i<viewBasis.length; ++i) {
@@ -382,7 +382,7 @@ function drawBasisVectors() {
 		for(var j=0; j<center.length; ++j) {
 			vecs[i][j] += center[j];
 		}
-		vecs[i] = getScreenCoords(vecs[i]);
+		vecs[i] = projectOntoScreen(vecs[i]);
 	}
 
 	context.beginPath();
