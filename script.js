@@ -167,17 +167,8 @@ function recenter() {
 	updateGraphDisplay();
 }
 function makeUnitVector(vec) {
-	//return scalarVec(Math.sqrt(dot(vec, vec)), vec);
-
-	var squareSum = 0;
-	for(var i=0; i<vec.length; ++i) {
-		squareSum += Math.pow(vec[i], 2);
-	}
-	var divide = Math.sqrt(squareSum);
-	for(var i=0; i<vec.length; ++i) {
-		vec[i] *= (1/divide);
-	}
-	return vec;
+	//
+	return scalarVec(Math.sqrt(dot(vec, vec)), vec);
 }
 function orthonormalizeViewBasis() {
 	console.log("FUNCTION CALL: orthonormalizeViewBasis()");
