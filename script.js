@@ -18,7 +18,7 @@ var axisColors = ["#ff0000", "#00ff00", "#0000ff"];
 var lightAxisColors = ["#ffaaaa", "#aaffaa", "#aaaaff"];
 var canvasBackgroundColor = "#dddddd";
 var showNegativeAxes = false;
-var dragRotatingConstant = 1/10; //This constant slows down the rate that dragging rotates the graph.
+var dragRotatingConstant = 1/100; //This constant slows down the rate that dragging rotates the graph.
 
 //Global Variables
 var page = {};
@@ -115,7 +115,7 @@ function updateGraphDisplay() {
 	checkPlaneSide();
 
 	if(!front) {
-		context.transform(1, 0, 0, -1, 0, 0); //Flip the canvas horizontally and vertically.
+		//context.transform(1, 0, 0, -1, 0, 0); //Flip the canvas horizontally and vertically.
 	}
 
 	var axisPoints = getAxisPoints();
@@ -426,11 +426,11 @@ function pannedGraph(d) {
 function rotatedGraph(d) {
 	console.log("FUNCTION CALL: rotatedGraph("+d+")");
 
-	viewVector[0] += d[0]*viewBasis[0][0]*dragRotatingConstant;
+	viewVector[0] += d[0]*viewBasis[0][0]*dragRotatingConstant*-1;
 	viewVector[0] += d[1]*viewBasis[1][0]*dragRotatingConstant;
-	viewVector[1] += d[0]*viewBasis[0][1]*dragRotatingConstant;
+	viewVector[1] += d[0]*viewBasis[0][1]*dragRotatingConstant*-1;
 	viewVector[1] += d[1]*viewBasis[1][1]*dragRotatingConstant;
-	viewVector[2] += d[0]*viewBasis[0][2]*dragRotatingConstant;
+	viewVector[2] += d[0]*viewBasis[0][2]*dragRotatingConstant*-1;
 	viewVector[2] += d[1]*viewBasis[1][2]*dragRotatingConstant;
 
 	updateGraphDisplay();
