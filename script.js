@@ -152,7 +152,7 @@ function updateGraphDisplay() {
 	drawAxes(axisPoints);
 
 	//drawViewVector(); //This is used for debugging purposes. Furthermore, you should never see this vector, as it should be perfectly edge-on.
-	drawBasisVectors(); //This is used for debugging purposes.
+	//drawBasisVectors(); //This is used for debugging purposes.
 
 	updateDebugDisplay();
 }
