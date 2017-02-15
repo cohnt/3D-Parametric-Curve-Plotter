@@ -9,10 +9,10 @@ var defaults = { //The defaults that the page loads when you first open it.
 	tmax: "4*pi",
 	tstep: "pi/64",
 	center: function() { return [0, 0, 0]; },
-	viewVector: function() { return eval(prompt("viewVector")); },
+	viewVector: function() { return [1, 1, 1]; },
 	zoom: 50,
 	viewRotation: 0,
-	maxPoints: 100
+	maxPoints: 5
 };
 var axisColors = ["#ff0000", "#00ff00", "#0000ff"];
 var lightAxisColors = ["#ffaaaa", "#aaffaa", "#aaaaff"];
@@ -112,7 +112,6 @@ function updateGraphDisplay() {
 	setConstantContextTransforms();
 	calculateViewBasis();
 	orthonormalizeViewBasis();
-	checkPlaneSide();
 
 	var axisPoints = getAxisPoints();
 	TEMP = axisPoints.slice(0);
