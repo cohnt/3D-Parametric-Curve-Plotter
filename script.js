@@ -114,10 +114,6 @@ function updateGraphDisplay() {
 	orthonormalizeViewBasis();
 	checkPlaneSide();
 
-	if(!front) {
-		//context.transform(1, 0, 0, -1, 0, 0); //Flip the canvas horizontally and vertically.
-	}
-
 	var axisPoints = getAxisPoints();
 	TEMP = axisPoints.slice(0);
 	drawAxes(axisPoints);
@@ -405,17 +401,6 @@ function drawBasisVectors() {
 	context.moveTo(startPoint[0], startPoint[1]);
 	context.lineTo(vecs[1][0], vecs[1][1]);
 	context.stroke();
-}
-function checkPlaneSide() {
-	console.log("FUNCTION CALL: checkPlaneSide()");
-
-	front = true;
-	for(var i=0; i<viewVector.length; ++i) {
-		if(viewVector[i] < 0) {
-			front = false;
-			break;
-		}
-	}
 }
 
 function pannedGraph(d) {
