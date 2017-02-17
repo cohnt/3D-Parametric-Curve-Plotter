@@ -23,6 +23,7 @@ var defaults = { //The defaults that the page loads when you first open it.
 var axisColors = ["#ff0000", "#00cc00", "#0000ff"];
 var lightAxisColors = ["#ffaaaa", "#aaccaa", "#aaaaff"];
 var canvasBackgroundColor = "#dddddd";
+var curveColor = "#000000";
 var showNegativeAxes = true;
 var dragRotatingConstant = 1/100; //This constant slows down the rate that dragging rotates the graph.
 var dragPanningConstant = 1/40; //This constant slows down the rate that dragging pans the graph.
@@ -52,6 +53,8 @@ var viewRotation = 0;
 var center = [];
 var front; //True if looking from the front, false if looking from the back.
 var userFunction = []; //Array of length 3, which each entry being a function you can call.
+var curveCoordinates = []; //Array containing all of the points, in order of the parametric curve.
+var testCurveCoordinates = [[0, 0, 0], [1, 1, 1], [1, 2, 2], [1, 2, 3], [-5, 6, 7]];
 var keptMouseDeltas = [];
 
 //Classes
@@ -155,7 +158,26 @@ function updateGraphDisplay() {
 	TEMP = axisPoints.slice(0);
 	drawAxes(axisPoints);
 
+	drawCurve();
+
 	updateDebugDisplay();
+}
+function drawCurve() {
+	console.log("FUNCTION CALL: drawCurve()");
+
+	curveCoordinates = testCurveCoordinates.slice(0);
+
+	context.strokeStyle = curveColor;
+	context.beginPath();
+
+	var currentPoint = projectOntoScreen(curveCoordinates[0]);
+	context.moveTo(currentPoint[0], currentPoint[1]);
+
+	for(var i=1; i<curveCoordinates.length; ++i) {
+		currentPoint = projectOntoScreen(curveCoordinates[i]);
+		context.lineTo(currentPoint[0], currentPoint[1]);
+		context.stroke();
+	}
 }
 function dynamicContextTransformations() {
 	console.log("FUNCTION CALL: dynamicContextTransformations()");
