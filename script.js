@@ -501,8 +501,8 @@ function mouseMoved(event) {
 	mouseLocation[1] = event.clientY;
 
 	var delta = [0, 0];
-	delta[0] += (mouseLocation[0] - oldMouseLocation[0]);
-	delta[1] += (mouseLocation[1] - oldMouseLocation[1]);
+	delta[0] = Math.cos(degToRad(-viewRotation))*(mouseLocation[0]-oldMouseLocation[0]) - Math.sin(degToRad(-viewRotation))*(mouseLocation[1]-oldMouseLocation[1]);
+	delta[1] = Math.sin(degToRad(-viewRotation))*(mouseLocation[0]-oldMouseLocation[0]) + Math.cos(degToRad(-viewRotation))*(mouseLocation[1]-oldMouseLocation[1]);
 
 	currentlyPanning = mouseButtons["1"];
 	currentlyRotating = keys["16"];
