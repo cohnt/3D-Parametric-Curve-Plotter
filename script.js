@@ -29,6 +29,8 @@ var axesStrokeConstant = 2; //Make the axis lines thicker than default.
 var debugModeAreaLineBreaks = 1; //The number of line breaks above the debug area.
 var mouseDeltasToKeep = 8; //How many of the last mouse movements to keep recorded for panning/rotating.
 var debugMode = true;
+var rotateCheckButtonSpeed = 25; //How often the program checks if the rotate button is still pressed, in milliseconds.
+var rotateDegreesPerTick = 1.5; //How many degrees the view rotates per tick.
 
 //Global Variables
 var page = {};
@@ -45,7 +47,7 @@ var currentlyPanning = false;
 var currentlyRotating = false;
 var viewVector = [];
 var viewBasis = [];
-var viewRotation;
+var viewRotation = 0;
 var center = [];
 var front; //True if looking from the front, false if looking from the back.
 var userFunction = []; //Array of length 3, which each entry being a function you can call.
@@ -147,14 +149,19 @@ function updateGraphDisplay() {
 	clearCanvas();
 	setConstantContextTransforms();
 	orthonormalizeViewBasis();
-	var originLocation = projectOntoScreen(center);
-	context.transform(1, 0, 0, 1, -originLocation[0], -originLocation[1]);
-
+	dynamicContextTransformations();
 	var axisPoints = getAxisPoints();
 	TEMP = axisPoints.slice(0);
 	drawAxes(axisPoints);
 
 	updateDebugDisplay();
+}
+function dynamicContextTransformations() {
+	console.log("FUNCTION CALL: dynamicContextTransformations()");
+
+	var originLocation = projectOntoScreen(center);
+	context.transform(Math.cos(degToRad(viewRotation)), -Math.sin(degToRad(viewRotation)), Math.sin(degToRad(viewRotation)), Math.cos(degToRad(viewRotation)), 0, 0);
+	context.transform(1, 0, 0, 1, -originLocation[0], -originLocation[1]);
 }
 function updateDebugDisplay() {
 	console.log("FUNCTION CALL: updateDebugDisplay()");
@@ -212,6 +219,7 @@ function recenter() {
 	viewVector = defaults.viewVector();
 	viewBasis = defaults.viewBasis();
 	center = defaults.center();
+	viewRotation = defaults.viewRotation;
 
 	updateGraphDisplay();
 }
@@ -444,6 +452,10 @@ function drawBasisVectors() {
 	context.lineTo(vecs[1][0], vecs[1][1]);
 	context.stroke();
 }
+function degToRad(d) {
+	//
+	return d * Math.PI * (1/180);
+}
 
 function pannedGraph(d) {
 	console.log("FUNCTION CALL: pannedGraph("+d+")");
@@ -507,8 +519,29 @@ function mouseMoved(event) {
 	oldMouseLocation[1] = mouseLocation[1];
 }
 function keydown(event) {
-	//
+	if(event.which == 81 && !keys[String(81)]) { //Q
+		viewRotation += -1*rotateDegreesPerTick;
+		window.setTimeout(rotatingCheckAgain, rotateCheckButtonSpeed);
+		updateGraphDisplay();
+	}
+	else if(event.which == 69 && !keys[String(69)]) { //E
+		viewRotation += rotateDegreesPerTick;
+		window.setTimeout(rotatingCheckAgain, rotateCheckButtonSpeed);
+		updateGraphDisplay();
+	}
 	keys[String(event.which)] = true;
+	updateGraphDisplay();
+}
+function rotatingCheckAgain() {
+	if(keys[String(81)]) {
+		viewRotation += -1*rotateDegreesPerTick;
+		window.setTimeout(rotatingCheckAgain, rotateCheckButtonSpeed);
+	}
+	else if(keys[String(69)]) {
+		viewRotation += rotateDegreesPerTick;
+		window.setTimeout(rotatingCheckAgain, rotateCheckButtonSpeed);
+	}
+	updateGraphDisplay();
 }
 function keyup(event) {
 	//
