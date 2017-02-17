@@ -31,6 +31,7 @@ var axesStrokeConstant = 2; //Make the axis lines thicker than default.
 var debugModeAreaLineBreaks = 1; //The number of line breaks above the debug area.
 var mouseDeltasToKeep = 8; //How many of the last mouse movements to keep recorded for panning/rotating.
 var debugMode = true;
+var debugModeOnGraph = false;
 var rotateCheckButtonSpeed = 25; //How often the program checks if the rotate button is still pressed, in milliseconds.
 var rotateDegreesPerTick = 1.5; //How many degrees the view rotates per tick.
 
@@ -54,7 +55,7 @@ var center = [];
 var front; //True if looking from the front, false if looking from the back.
 var userFunction = []; //Array of length 3, which each entry being a function you can call.
 var curveCoordinates = []; //Array containing all of the points, in order of the parametric curve.
-var testCurveCoordinates = [[0, 0, 0], [1, 1, 1], [1, 2, 2], [1, 2, 3], [-5, 6, 7]];
+var testCurveCoordinates = [[0, 0, 0], [1, 1, 1], [1, 2, 2], [1, 2, 3], [-3, 3, 4]];
 var keptMouseDeltas = [];
 
 //Classes
@@ -160,7 +161,9 @@ function updateGraphDisplay() {
 
 	drawCurve();
 
-	updateDebugDisplay();
+	if(debugMode) {
+		updateDebugDisplay();
+	}
 }
 function drawCurve() {
 	console.log("FUNCTION CALL: drawCurve()");
@@ -202,8 +205,10 @@ function updateDebugDisplay() {
 	page.mouseDeltaCont.insertBefore(lineBreak, page.mouseDeltaCont.childNodes[0]);
 	page.mouseDeltaCont.insertBefore(lastMouseDelta, page.mouseDeltaCont.childNodes[0]);
 
-	drawViewVector(); //This is used for debugging purposes. Furthermore, you should never see this vector, as it should be perfectly edge-on.
-	drawBasisVectors(); //This is used for debugging purposes.
+	if(debugModeOnGraph) {
+		drawViewVector(); //This is used for debugging purposes. Furthermore, you should never see this vector, as it should be perfectly edge-on.
+		drawBasisVectors(); //This is used for debugging purposes.
+	}
 }
 function clearCanvas() {
 	console.log("FUNCTION CALL: clearCanvas()");
