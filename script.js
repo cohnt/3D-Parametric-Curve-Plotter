@@ -24,6 +24,7 @@ var lightAxisColors = ["#ffaaaa", "#aaccaa", "#aaaaff"];
 var canvasBackgroundColor = "#dddddd";
 var showNegativeAxes = true;
 var dragRotatingConstant = 1/100; //This constant slows down the rate that dragging rotates the graph.
+var dragPanningConstant = 1/40; //This constant slows down the rate that dragging pans the graph.
 var axesStrokeConstant = 2; //Make the axis lines thicker than default.
 var debugModeAreaLineBreaks = 1; //The number of line breaks above the debug area.
 var mouseDeltasToKeep = 8; //How many of the last mouse movements to keep recorded for panning/rotating.
@@ -146,6 +147,8 @@ function updateGraphDisplay() {
 	clearCanvas();
 	setConstantContextTransforms();
 	orthonormalizeViewBasis();
+	var originLocation = projectOntoScreen(center);
+	context.transform(1, 0, 0, 1, -originLocation[0], -originLocation[1]);
 
 	var axisPoints = getAxisPoints();
 	TEMP = axisPoints.slice(0);
@@ -208,6 +211,7 @@ function recenter() {
 	zoom = defaults.zoom;
 	viewVector = defaults.viewVector();
 	viewBasis = defaults.viewBasis();
+	center = defaults.center();
 
 	updateGraphDisplay();
 }
@@ -443,6 +447,17 @@ function drawBasisVectors() {
 
 function pannedGraph(d) {
 	console.log("FUNCTION CALL: pannedGraph("+d+")");
+
+	var d3 = [0, 0, 0];
+	for(var i=0; i<d3.length; ++i) {
+		d3[i] += -1*d[0]*viewBasis[0][i];
+		d3[i] += d[1]*viewBasis[1][i];
+		d3[i] *= dragPanningConstant;
+	}
+
+	for(var i=0; i<d3.length; ++i) {
+		center[i] += d3[i];
+	}
 
 	updateGraphDisplay();
 }
