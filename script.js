@@ -53,9 +53,8 @@ var viewBasis = [];
 var viewRotation = 0;
 var center = [];
 var front; //True if looking from the front, false if looking from the back.
-var userFunction = []; //Array of length 3, which each entry being a function you can call.
+var userFunction = [function(t) { return t; }, function(t) { return Math.cos(t); }, function(t) { return Math.sin(t); }]; //Array of length 3, which each entry being a function you can call.
 var curveCoordinates = []; //Array containing all of the points, in order of the parametric curve.
-var testCurveCoordinates = [[0, 0, 0], [1, 1, 1], [1, 2, 2], [1, 2, 3], [-3, 3, 4]];
 var keptMouseDeltas = [];
 
 //Classes
@@ -145,6 +144,7 @@ function updateGraphComputations() {
 	console.log("FUNCTION CALL: updateGraphComputations()");
 
 	processFunctions();
+	getCurvePoints();
 
 	updateGraphDisplay();
 }
@@ -165,16 +165,41 @@ function updateGraphDisplay() {
 		updateDebugDisplay();
 	}
 }
+function getCurvePoints() {
+	console.log("FUNCTION CALL: getCurvePoints()");
+	
+	var tMin = Number(page.tminInputField.value);
+	var tMax = Number(page.tmaxInputField.value);
+	var tStep = Number(page.tstepInputField.value);
+
+	if(isNaN(tMin) || isNaN(tMax) || isNaN(tStep)) {
+		return;
+	}
+	else {
+		var t = tMin;
+		var fT;
+		while(t <= tMax) {
+			fT = [0, 0, 0];
+			for(var i=0; i<userFunction.length; ++i) {
+				fT[i] = userFunction[i](t);
+			}
+			curveCoordinates.push(fT);
+			t += tStep;
+		}
+	}
+}
 function drawCurve() {
+	if(curveCoordinates.length == 0) {
+		return;
+	}
+
 	console.log("FUNCTION CALL: drawCurve()");
 
-	curveCoordinates = testCurveCoordinates.slice(0);
-
 	context.strokeStyle = curveColor;
-	context.beginPath();
 
 	var currentPoint = projectOntoScreen(curveCoordinates[0]);
 	context.moveTo(currentPoint[0], currentPoint[1]);
+	context.beginPath();
 
 	for(var i=1; i<curveCoordinates.length; ++i) {
 		currentPoint = projectOntoScreen(curveCoordinates[i]);
