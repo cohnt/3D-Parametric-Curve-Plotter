@@ -17,7 +17,8 @@ var defaults = { //The defaults that the page loads when you first open it.
 	},
 	zoom: 50,
 	viewRotation: 0,
-	maxPoints: 5
+	maxPoints: 6,
+	minPoints: 3
 };
 var axisColors = ["#ff0000", "#00cc00", "#0000ff"];
 var lightAxisColors = ["#ffaaaa", "#aaccaa", "#aaaaff"];
@@ -340,7 +341,8 @@ function getAxisPoints() {
 	var nextPoint = [];
 	var nextScreenPoint = [];
 	var difference = [];
-	var maxPointCount = defaults.maxPoints * (defaults.zoom / zoom);
+	var maxPointCount = defaults.maxPoints;
+	var minPointCount = defaults.minPoints;
 	var currentPointCount;
 	var jEndVal = showNegativeAxes ? -1 : 1;
 	for(var i=0; i<3; ++i) { //Iterating over each axis
@@ -371,6 +373,11 @@ function getAxisPoints() {
 				else if((nextScreenPoint[1] < yMin) && (difference[1] <= 0)) {
 					finished = true;
 				}
+
+				if(currentPointCount < minPointCount) {
+					finished = false;
+				}
+
 				currentPoint = nextPoint.slice(0);
 				currentScreenPoint = projectOntoScreen(currentPoint);
 
