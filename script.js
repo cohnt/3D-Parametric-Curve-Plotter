@@ -53,7 +53,7 @@ var viewBasis = [];
 var viewRotation = 0;
 var center = [];
 var front; //True if looking from the front, false if looking from the back.
-var userFunction = [function(t) { return t; }, function(t) { return Math.cos(t); }, function(t) { return Math.sin(t); }]; //Array of length 3, which each entry being a function you can call.
+var userFunction = [function(t) { return t/6; }, function(t) { return Math.pow(Math.E, (t/25))*Math.cos(t); }, function(t) { return Math.pow(Math.E, (t/25))*Math.sin(t); }]; //Array of length 3, which each entry being a function you can call.
 var curveCoordinates = []; //Array containing all of the points, in order of the parametric curve.
 var keptMouseDeltas = [];
 
@@ -176,6 +176,7 @@ function getCurvePoints() {
 		return;
 	}
 	else {
+		curveCoordinates = [];
 		var t = tMin;
 		var fT;
 		while(t <= tMax) {
