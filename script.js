@@ -204,8 +204,8 @@ function drawCurve() {
 	for(var i=1; i<curveCoordinates.length; ++i) {
 		currentPoint = projectOntoScreen(curveCoordinates[i]);
 		context.lineTo(currentPoint[0], currentPoint[1]);
-		context.stroke();
 	}
+	context.stroke();
 }
 function dynamicContextTransformations() {
 	console.log("FUNCTION CALL: dynamicContextTransformations()");
@@ -458,14 +458,15 @@ function drawAxes(axes) {
 		context.moveTo(axes[i][0][0], axes[i][0][1]);
 		for(var j=1; j<axes[i].length; ++j) {
 			if(axes[i][j] == "FLIP") {
+				context.stroke();
 				context.strokeStyle = lightAxisColors[i];
 				context.beginPath();
 			}
 			else {
 				context.lineTo(axes[i][j][0], axes[i][j][1]);
-				context.stroke();
 			}
 		}
+		context.stroke();
 		context.beginPath();
 	}
 	context.strokeStyle = "#000000";
