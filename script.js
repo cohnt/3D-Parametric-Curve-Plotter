@@ -2,9 +2,9 @@
 var zoomPowerConstant = 1.1; //This is used when calculating the zoom factor when scrolling.
 var mouseWheelCalibrationConstant = 53; //This is the value given when the mouse is scrolled one notch.
 var defaults = { //The defaults that the page loads when you first open it.
-	x: "t/6",
-	y: "(e^(1/25))*cos(t)",
-	z: "(e^(1/25))*sin(t)",
+	x: "T/6",
+	y: "(E^(1/25))*cos(T)",
+	z: "(E^(1/25))*sin(T)",
 	tmin: "-200",
 	tmax: "100",
 	tstep: "0.05",
@@ -34,6 +34,8 @@ var debugMode = true;
 var debugModeOnGraph = false;
 var rotateCheckButtonSpeed = 25; //How often the program checks if the rotate button is still pressed, in milliseconds.
 var rotateDegreesPerTick = 1.5; //How many degrees the view rotates per tick.
+var functionStrings = ["+", "-", "*", "/", "^", "%", "cos", "sin", "tan", "cot", "sec", "csc", "arcsin", "arccos", "arctan", "sqrt", "log", "ln", "logbase", "max", "min", "floor", "ceil", "round"];
+var specialNumberStrings = ["PI", "E", "T"];
 
 //Global Variables
 var page = {};
@@ -264,7 +266,52 @@ function processFunctions() {
 function processFunction(functionString) {
 	console.log("FUNCTION CALL: processFunction("+functionString+")");
 
-	var evalString = functionString.slice(0);
+	//Using these resources:
+	//http://stackoverflow.com/questions/114586/smart-design-of-a-math-parser
+	//http://lukaszwrobel.pl/blog/math-parser-part-1-introduction
+	//https://en.wikipedia.org/wiki/Infix_notation
+	//https://en.wikipedia.org/wiki/Shunting-yard_algorithm
+	//https://en.wikipedia.org/wiki/Reverse_Polish_notation
+	//http://scriptasylum.com/tutorials/infix_postfix/algorithms/postfix-evaluation/index.htm
+	//https://upload.wikimedia.org/wikipedia/commons/2/24/Shunting_yard.svg
+	//http://wcipeg.com/wiki/Shunting_yard_algorithm
+	//http://stackoverflow.com/questions/11708195/infix-to-postfix-with-function-support
+
+	var infixString = functionString;
+	//var postfixString = convertInfixToPostfix(infixString);
+}
+function convertInfixToPostfix(infix) {
+	console.log("FUNCTION CALL: convertInfixToPostfix("+infix+")");
+
+	var outputQueue = "";
+	var operatorStack = "";
+	var token;
+	for(var i=0; i<infix.length; ++i) {
+		token = infix[i];
+		var specialNumber = isSpecialNumber(token, i, infix);
+		if(!isNaN(Number(token))) {
+			outputQueue += token;
+		}
+		else if(specialNumber[0]) {
+			outputQueue += specialNumber[1];
+			i += specialNumber[2];
+		}
+		else if(isFunctionChar(token, i, infix)) {
+
+		}
+		else if(token == ",") {
+
+		}
+	}
+}
+function isSpecialNumber(char, index, equation) {
+	console.log("FUNCTION CALL: isSpecialNumber("+char+", "+index+", "+equation+")");
+
+}
+function isFunctionChar(char, index, equation) {
+	console.log("isFunctionChar("+char+", "+index+", "+equation+")");
+
+
 }
 function recenter() {
 	console.log("FUNCTION CALL: recenter()");

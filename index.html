@@ -11,23 +11,24 @@
 		<p>List of allowed functions and characters</p>
 		<ul>
 			<li><pre>All numbers (including the decimal point, when used appropriately)</pre></li>
-			<li><pre>t (the parameter variable)</pre></li>
+			<li><pre>T (the parameter variable)</pre></li>
 			<li><pre>Parenthesis (make sure they match!)</pre></li>
-			<li><pre>+, -, *, /, ^</pre></li>
-			<li><pre>cos, sin, tan, cot, sec, csc</pre></li>
-			<li><pre>arccos, arcsin, arctan</pre></li>
-			<li><pre>sqrt</pre></li>
-			<li><pre>log, ln, logbase_base</pre></li>
-			<li><pre>pi, e</pre></li>
+			<li><pre>+, -, *, /, ^, %</pre></li>
+			<li><pre>cos(x), sin(x), tan(x), cot(x), sec(x), csc(x)</pre></li>
+			<li><pre>arcsin(x), arccos(x), arctan(x)</pre></li>
+			<li><pre>sqrt(x)</pre></li>
+			<li><pre>log(x), ln(x), logbase(base, x)</pre></li>
+			<li><pre>PI, E</pre></li>
+			<li><pre>max(a,b), min(a,b), floor(x), ceil(x), round(x)</pre></li>
 		</ul>
 		<p>Use parentheses after each function. For example, sin(x), sqrt(x), and ln(x). Logbase is logbase_b(x).
 		<br>
 		<p>Sample valid entries:</p>
 		<ul>
-			<li><pre>sin(3*t)</pre></li>
-			<li><pre>sqrt(logbase_2(t))</pre></li>
-			<li><pre>3*(e+2)*t</pre></li>
-			<li><pre>arctan(pi*((t-17)^{2}))</pre></li>
+			<li><pre>sin(3*T)</pre></li>
+			<li><pre>sqrt(logbase(2, T))</pre></li>
+			<li><pre>3*(E+2)*T</pre></li>
+			<li><pre>arctan(PI*((T-17)^2))</pre></li>
 		</ul>
 		<p>Pan the graph by clicking and dragging. Rotate by holding shift while moving the mouse. Zoom with the mouse wheel.</p>
 	</div>
@@ -35,15 +36,15 @@
 	<br>
 	<div id="functionInput" class="container">
 		<div id="xFunctionContainer" class="container functionContainer">
-			<pre>x(t)=</pre><textarea id="xFunction" class="mathInput"></textarea><div id="xValid" class="valid">Invalid</div>
+			<pre>x(T)=</pre><textarea id="xFunction" class="mathInput"></textarea><div id="xValid" class="valid">Invalid</div>
 		</div>
 		<br>
 		<div id="yFunctionContainer" class="container functionContainer">
-			<pre>y(t)=</pre><textarea id="yFunction" class="mathInput"></textarea><div id="yValid" class="valid">Invalid</div>
+			<pre>y(T)=</pre><textarea id="yFunction" class="mathInput"></textarea><div id="yValid" class="valid">Invalid</div>
 		</div>
 		<br>
 		<div id="zFunctionContainer" class="container functionContainer">
-			<pre>z(t)=</pre><textarea id="zFunction" class="mathInput"></textarea><div id="zValid" class="valid">Invalid</div>
+			<pre>z(T)=</pre><textarea id="zFunction" class="mathInput"></textarea><div id="zValid" class="valid">Invalid</div>
 		</div>
 		<br>
 		<br>
@@ -54,11 +55,11 @@
 	<br>
 	<div id="graphOptions" class="container">
 		<div id="parameterRangeContainer">
-			<pre> tmin=</pre><textarea id="tmin" class="mathInput"></textarea>
+			<pre> Tmin=</pre><textarea id="tmin" class="mathInput"></textarea>
 			<br>
-			<pre> tmax=</pre><textarea id="tmax" class="mathInput"></textarea>
+			<pre> Tmax=</pre><textarea id="tmax" class="mathInput"></textarea>
 			<br>
-			<pre>tstep=</pre><textarea id="tstep" class="mathInput"></textarea>
+			<pre>Tstep=</pre><textarea id="tstep" class="mathInput"></textarea>
 		</div>
 	</div>
 	<br>
