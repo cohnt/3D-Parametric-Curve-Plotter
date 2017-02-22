@@ -330,7 +330,7 @@ function processFunction(functionString) {
 
 	var infixString = functionString;
 	var infixArray = infixStringToArray(infixString);
-	var postfixString = convertInfixToPostfix(infixArray);
+	var postfixArray = convertInfixToPostfix(infixArray);
 }
 function infixStringToArray(infix) {
 	console.log("FUNCTION CALL: infixStringToArray("+infix+")");
