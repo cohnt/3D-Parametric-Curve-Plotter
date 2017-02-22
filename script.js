@@ -305,7 +305,55 @@ function infixStringToArray(infix) {
 }
 function convertInfixToPostfix(infix) {
 	console.log("FUNCTION CALL: convertInfixToPostfix("+infix+")");
-	//
+	
+	//The SHUNTING-YARD ALGORITHM...
+
+	var postfix = [];
+	stack = [];
+	for(var i=0; i<infix.length; ++i) {
+		if(isOperand(inflix[i])) {
+			//
+		}
+		else if(infix[i] == "(") {
+			//
+		}
+		else if(infix[i] == ")") {
+			//
+		}
+		else if(isOperator(infix[i])) {
+			//
+		}
+		else if(infix[i] == ",") {
+			//
+		}
+	}
+}
+function isOperand(char) {
+	if(!isNaN(Number(char))) {
+		return true;
+	}
+	else if(char == "PI") {
+		return true;
+	}
+	else if(char == "E") {
+		return true;
+	}
+	else if(char == "T") {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+function isOperator(char) {
+	var foo = false;
+	for(var i=0; i<mathSpecialStrings.length; ++i) {
+		if(char == mathSpecialStrings[i]) {
+			foo = true;
+			break;
+		}
+	}
+	return foo;
 }
 function recenter() {
 	console.log("FUNCTION CALL: recenter()");
