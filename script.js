@@ -137,7 +137,10 @@ var curveCoordinates = []; //Array containing all of the points, in order of the
 var keptMouseDeltas = [];
 
 //Classes
-
+function mathFunc(f, args) {
+	this.func = f;
+	this.args = args;
+}
 
 //Functions
 function setup() {
@@ -362,33 +365,35 @@ function processFunction(functionString) {
 function convertPostfixToFunction(postfix) {
 	var stack = [];
 	var nextToken;
+	var stackObjArgs;
+	var stackObjFunc;
 	var args;
 	var inputs = [];
 	while(postfix.length > 0) {
 		nextToken = postfix.shift();
 		if(isOperand(nextToken)) {
+			stackObjArgs = Number(nextToken);
 			if(nextToken == "PI") {
-				nextToken = function(t) {
+				stackObjFunc = function(t) {
 					return Math.PI;
 				}
 			}
 			else if(nextToken == "E") {
-				nextToken = function(t) {
+				stackObjFunc = function(t) {
 					return Math.E;
 				}
 			}
 			else if(nextToken == "T") {
-				nextToken = function(t) {
+				stackObjFunc = function(t) {
 					return t;
 				}
 			}
 			else {
-				var temp = nextToken;
-				nextToken = function(t) {
-					return Number(temp);
+				stackObjFunc = function(t) {
+					return this.args;
 				}
 			}
-			stack.push(nextToken);
+			stack.push(new mathFunc(stackObjFunc, stackObjArgs));
 		}
 		else { //It's not an operand, so it's an operator.
 			args = funcArgs[nextToken];
@@ -398,7 +403,7 @@ function convertPostfixToFunction(postfix) {
 			else {
 				inputs = [];
 				for(var i=0; i<args; ++i) {
-					inputs.push(stack.pop());
+					inputs.unshift(stack.pop());
 				}
 				stack.push(makeFunction(nextToken, inputs));
 			}
@@ -407,130 +412,131 @@ function convertPostfixToFunction(postfix) {
 	return stack[0];
 }
 function makeFunction(func, args) {
-	var jsFunc;
+	var returnObjFunc;
+	var returnObjArgs = args.slice(0);
 	switch(func) {
 		case "+":
-			jsFunc = function(t) {
-				return args[0](t)+args[1](t);
+			returnObjFunc = function(t) {
+				return this.args[0].func(t, this.args[0].args)+this.args[1].func(t, this.args[1].args);
 			}
 			break;
 		case "-":
-			jsFunc = function(t) {
-				return args[0](t)-args[1](t);
+			returnObjFunc = function(t) {
+				return this.args[0].func(t, this.args[0].args)-this.args[1].func(t, this.args[1].args);
 			}
 			break;
 		case "*":
-			jsFunc = function(t) {
-				return args[0](t)*args[1](t);
+			returnObjFunc = function(t) {
+				return this.args[0].func(t, this.args[0].args)*this.args[1].func(t, this.args[1].args);
 			}
 			break;
 		case "/":
-			jsFunc = function(t) {
-				return args[0](t)/args[1](t);
+			returnObjFunc = function(t) {
+				return this.args[0].func(t, this.args[0].args)/this.args[1].func(t, this.args[1].args);
 			}
 			break;
 		case "^":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 				return Math.pow(args[0](t), args[1](t));
 			}
 			break;
 		case "sin":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 				return Math.sin(args[0](t));
 			}
 			break;
 		case "cos":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "tan":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "cot":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "sec":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "csc":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "%":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "arcsin":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "arccos":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "arctan":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "sqrt":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "logbase":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "log":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "ln":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "max":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "min":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "floor":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "ceil":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 		case "round":
-			jsFunc = function(t) {
+			returnObjFunc = function(t) {
 
 			}
 			break;
 	}
-	return jsFunc;
+	return new mathFunc(returnObjFunc, returnObjArgs);
 }
 function infixStringToArray(infix) {
 	console.log("FUNCTION CALL: infixStringToArray("+infix+")");
