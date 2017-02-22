@@ -342,9 +342,27 @@ function processFunctions() {
 	console.log("FUNCTION CALL: processFunctions()");
 	
 	//This is the hard part XD
-	userFunction[0] = processFunction(page.xInputField.value);
-	userFunction[1] = processFunction(page.yInputField.value);
-	userFunction[2] = processFunction(page.zInputField.value);
+	try {
+		userFunction[0] = processFunction(page.xInputField.value);
+		page.xValid.style.display = "none";
+	}
+	catch(err) {
+		page.xValid.style.display = "inline-block";
+	}
+	try {
+		userFunction[1] = processFunction(page.yInputField.value);
+		page.yValid.style.display = "none";
+	}
+	catch(err) {
+		page.yValid.style.display = "inline-block";
+	}
+	try {
+		userFunction[2] = processFunction(page.zInputField.value);
+		page.zValid.style.display = "none";
+	}
+	catch(err) {
+		page.zValid.style.display = "inline-block";
+	}
 }
 function processFunction(functionString) {
 	console.log("FUNCTION CALL: processFunction("+functionString+")");
