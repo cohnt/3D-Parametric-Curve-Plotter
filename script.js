@@ -563,7 +563,9 @@ function infixStringToArray(infix) {
 					infixArray.push(mathSpecialStrings[i]);
 					currentString = currentString.substr(mathSpecialStrings[i].length);
 					nextChar = true;
-					lastCharOperator = true;
+					if(!(mathSpecialStrings[i] == "(" || mathSpecialStrings[i] == ")")) {
+						lastCharOperator = true;
+					}
 					break;
 				}
 			}
