@@ -34,7 +34,7 @@ var debugMode = true;
 var debugModeOnGraph = false;
 var rotateCheckButtonSpeed = 25; //How often the program checks if the rotate button is still pressed, in milliseconds.
 var rotateDegreesPerTick = 1.5; //How many degrees the view rotates per tick.
-var mathSpecialStrings = ["(", ")", "+", "-", "*", "/", "^", "%", "arcsin", "arccos", "arctan", "cos", "sin", "tan", "cot", "sec", "csc", "sqrt", "logbase", "log", "ln", "max", "min", "floor", "ceil", "round", "PI", "E", "T"];
+var mathSpecialStrings = ["(", ")", "+", "-", "*", "/", "^", "%", "arcsin", "arccos", "arctan", "cos", "sin", "tan", "cot", "sec", "csc", "sqrt", "logbase", "log", "ln", "max", "min", "floor", "ceil", "round", "PI", "E", "T", ","];
 var precedence = {
 	"+": 2,
 	"-": 2,
@@ -437,67 +437,67 @@ function makeFunction(func, args) {
 			break;
 		case "^":
 			returnObjFunc = function(t) {
-				return Math.pow(args[0](t), args[1](t));
+				return Math.pow(this.args[0].func(t, this.args[0].args), this.args[1].func(t, this.args[1].args));
 			}
 			break;
 		case "sin":
 			returnObjFunc = function(t) {
-				return Math.sin(args[0](t));
+				return Math.sin(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "cos":
 			returnObjFunc = function(t) {
-
+				return Math.cos(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "tan":
 			returnObjFunc = function(t) {
-
+				return Math.tan(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "cot":
 			returnObjFunc = function(t) {
-
+				return 1/Math.tan(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "sec":
 			returnObjFunc = function(t) {
-
+				return 1/Math.cos(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "csc":
 			returnObjFunc = function(t) {
-
+				return 1/Math.sin(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "%":
 			returnObjFunc = function(t) {
-
+				return this.args[0].func(t, this.args[0].args)%this.args[1].func(t, this.args[1].args);
 			}
 			break;
 		case "arcsin":
 			returnObjFunc = function(t) {
-
+				return Math.asin(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "arccos":
 			returnObjFunc = function(t) {
-
+				return Math.acos(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "arctan":
 			returnObjFunc = function(t) {
-
+				return Math.atan(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "sqrt":
 			returnObjFunc = function(t) {
-
+				return Math.sqrt(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "logbase":
 			returnObjFunc = function(t) {
-
+				return Math.log(this.args[1].func(t, this.args[1].args))/Math.log(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "log":
@@ -589,6 +589,13 @@ function convertInfixToPostfix(infix) {
 				stackLast = stack.pop();
 			}
 		}
+		else if(infix[i] == ",") {
+			stackLast = stack[stack.length-1];
+			while(stackLast != "(") {
+				postfix.push(stackLast);
+				stack.pop();
+			}
+		}
 		else if(isOperator(infix[i])) {
 			if(stack.length == 0 || stack[stack.length-1] == "(") {
 				stack.push(infix[i]);
@@ -603,14 +610,6 @@ function convertInfixToPostfix(infix) {
 				postfix.push(stack.pop());
 				stack.push(infix[i]);
 			}
-		}
-		else if(infix[i] == ",") {
-			stackLast = stack[stack.length-1];
-			while(stackLast != "(") {
-				postfix.push(stackLast);
-				stack.pop();
-			}
-			stack.push(infix[i])
 		}
 	}
 	while(stack.length > 0) {
