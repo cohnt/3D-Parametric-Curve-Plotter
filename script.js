@@ -132,7 +132,7 @@ var viewBasis = [];
 var viewRotation = 0;
 var center = [];
 var front; //True if looking from the front, false if looking from the back.
-var userFunction = [function(t) { return t/6; }, function(t) { return Math.pow(Math.E, (t/25))*Math.cos(t); }, function(t) { return Math.pow(Math.E, (t/25))*Math.sin(t); }]; //Array of length 3, which each entry being a function you can call.
+var userFunction = []; //Array of length 3, which each entry being a function you can call.
 var curveCoordinates = []; //Array containing all of the points, in order of the parametric curve.
 var keptMouseDeltas = [];
 
@@ -264,7 +264,7 @@ function getCurvePoints() {
 		while(t <= tMax) {
 			fT = [0, 0, 0];
 			for(var i=0; i<userFunction.length; ++i) {
-				fT[i] = userFunction[i](t);
+				fT[i] = userFunction[i].func(t, userFunction[i].args);
 			}
 			curveCoordinates.push(fT);
 			t += tStep;
@@ -339,9 +339,9 @@ function processFunctions() {
 	console.log("FUNCTION CALL: processFunctions()");
 	
 	//This is the hard part XD
-	xFunction = processFunction(page.xInputField.value);
-	yFunction = processFunction(page.yInputField.value);
-	zFunction = processFunction(page.zInputField.value);
+	userFunction[0] = processFunction(page.xInputField.value);
+	userFunction[1] = processFunction(page.yInputField.value);
+	userFunction[2] = processFunction(page.zInputField.value);
 }
 function processFunction(functionString) {
 	console.log("FUNCTION CALL: processFunction("+functionString+")");
@@ -360,7 +360,7 @@ function processFunction(functionString) {
 	var infixString = functionString;
 	var infixArray = infixStringToArray(infixString);
 	var postfixArray = convertInfixToPostfix(infixArray);
-	//return convertPostfixToFunction(postfixArray);
+	return convertPostfixToFunction(postfixArray);
 }
 function convertPostfixToFunction(postfix) {
 	var stack = [];
