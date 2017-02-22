@@ -579,6 +579,9 @@ function infixStringToArray(infix) {
 				num += "0";
 				currentString = currentString.substr(1);
 			}
+			if(!isOperand(currentString[0])) {
+				throw("Error! Unrecognized character: " + currentString[0]);
+			}
 			while(!isNaN(currentString[0]) || currentString[0] == ".") {
 				num = num + currentString[0];
 				currentString = currentString.substr(1);
