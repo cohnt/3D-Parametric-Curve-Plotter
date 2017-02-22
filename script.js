@@ -87,6 +87,32 @@ var associativity = {
 	"ceil": "right",
 	"round": "right"
 };
+var funcArgs = {
+	"+": 2,
+	"-": 2,
+	"*": 2,
+	"/": 2,
+	"^": 2,
+	"sin": 1,
+	"cos": 1,
+	"tan": 1,
+	"cot": 1,
+	"sec": 1,
+	"csc": 1,
+	"%": 2,
+	"arcsin": 1,
+	"arccos": 1,
+	"arctan": 1,
+	"sqrt": 1,
+	"logbase": 2,
+	"log": 1,
+	"ln": 1,
+	"max": 2,
+	"min": 2,
+	"floor": 1,
+	"ceil": 1,
+	"round": 1
+}
 
 //Global Variables
 var page = {};
@@ -331,6 +357,180 @@ function processFunction(functionString) {
 	var infixString = functionString;
 	var infixArray = infixStringToArray(infixString);
 	var postfixArray = convertInfixToPostfix(infixArray);
+	//return convertPostfixToFunction(postfixArray);
+}
+function convertPostfixToFunction(postfix) {
+	var stack = [];
+	var nextToken;
+	var args;
+	var inputs = [];
+	while(postfix.length > 0) {
+		nextToken = postfix.shift();
+		if(isOperand(nextToken)) {
+			if(nextToken == "PI") {
+				nextToken = function(t) {
+					return Math.PI;
+				}
+			}
+			else if(nextToken == "E") {
+				nextToken = function(t) {
+					return Math.E;
+				}
+			}
+			else if(nextToken == "T") {
+				nextToken = function(t) {
+					return t;
+				}
+			}
+			else {
+				var temp = nextToken;
+				nextToken = function(t) {
+					return Number(temp);
+				}
+			}
+			stack.push(nextToken);
+		}
+		else { //It's not an operand, so it's an operator.
+			args = funcArgs[nextToken];
+			if(stack.length < args) {
+				throw("Not enough values for function! "+nextToken+" requires "+args+" inputs, but only received "+stack.length+"!");
+			}
+			else {
+				inputs = [];
+				for(var i=0; i<args; ++i) {
+					inputs.push(stack.pop());
+				}
+				stack.push(makeFunction(nextToken, inputs));
+			}
+		}
+	}
+	return stack[0];
+}
+function makeFunction(func, args) {
+	var jsFunc;
+	switch(func) {
+		case "+":
+			jsFunc = function(t) {
+				return args[0](t)+args[1](t);
+			}
+			break;
+		case "-":
+			jsFunc = function(t) {
+				return args[0](t)-args[1](t);
+			}
+			break;
+		case "*":
+			jsFunc = function(t) {
+				return args[0](t)*args[1](t);
+			}
+			break;
+		case "/":
+			jsFunc = function(t) {
+				return args[0](t)/args[1](t);
+			}
+			break;
+		case "^":
+			jsFunc = function(t) {
+				return Math.pow(args[0](t), args[1](t));
+			}
+			break;
+		case "sin":
+			jsFunc = function(t) {
+				return Math.sin(args[0](t));
+			}
+			break;
+		case "cos":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "tan":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "cot":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "sec":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "csc":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "%":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "arcsin":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "arccos":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "arctan":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "sqrt":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "logbase":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "log":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "ln":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "max":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "min":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "floor":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "ceil":
+			jsFunc = function(t) {
+
+			}
+			break;
+		case "round":
+			jsFunc = function(t) {
+
+			}
+			break;
+	}
+	return jsFunc;
 }
 function infixStringToArray(infix) {
 	console.log("FUNCTION CALL: infixStringToArray("+infix+")");
@@ -411,6 +611,7 @@ function convertInfixToPostfix(infix) {
 		postfix.push(stack.pop());
 	}
 	console.log(postfix);
+	return postfix;
 }
 function isOperand(char) {
 	if(!isNaN(Number(char))) {
