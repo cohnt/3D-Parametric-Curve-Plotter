@@ -35,6 +35,22 @@ var debugModeOnGraph = false;
 var rotateCheckButtonSpeed = 25; //How often the program checks if the rotate button is still pressed, in milliseconds.
 var rotateDegreesPerTick = 1.5; //How many degrees the view rotates per tick.
 var mathSpecialStrings = ["+", "-", "*", "/", "^", "%", "arcsin", "arccos", "arctan", "cos", "sin", "tan", "cot", "sec", "csc", "sqrt", "logbase", "log", "ln", "max", "min", "floor", "ceil", "round", "PI", "E", "T"];
+var precedence = {
+	"+": 2,
+	"-": 2,
+	"*": 3,
+	"/": 3,
+	"^": 4,
+	"sin": 4
+};
+var associativity = {
+	"+": "left",
+	"-": "left",
+	"*": "left",
+	"/": "left",
+	"^": "right",
+	"sin": "right",
+};
 
 //Global Variables
 var page = {};
@@ -278,7 +294,7 @@ function processFunction(functionString) {
 
 	var infixString = functionString;
 	var infixArray = infixStringToArray(infixString);
-	var postfixString = convertInfixToPostfix(infixString);
+	var postfixString = convertInfixToPostfix(infixArray);
 }
 function infixStringToArray(infix) {
 	console.log("FUNCTION CALL: infixStringToArray("+infix+")");
@@ -302,6 +318,7 @@ function infixStringToArray(infix) {
 		}
 	}
 	console.log(infixArray);
+	return infixArray;
 }
 function convertInfixToPostfix(infix) {
 	console.log("FUNCTION CALL: convertInfixToPostfix("+infix+")");
@@ -310,23 +327,49 @@ function convertInfixToPostfix(infix) {
 
 	var postfix = [];
 	stack = [];
+	var stackLast;
 	for(var i=0; i<infix.length; ++i) {
 		if(isOperand(infix[i])) {
-			//
-		}
-		else if(infix[i] == "(") {
-			//
-		}
-		else if(infix[i] == ")") {
-			//
+			postfix.push(infix[i]);
 		}
 		else if(isOperator(infix[i])) {
-			//
+			if(stack.length == 0 || stack[stack.length-1] == "(") {
+				stack.push(infix[i]);
+			}
+			else if(precedence[infix[i]] > precedence[stack[stack.length-1]]) {
+				stack.push(infix[i]);
+			}
+			else if((precedence[infix[i]] == precedence[stack[stack.length-1]]) && (associativity[infix[i]] == "right")) {
+				stack.push(infix[i]);
+			}
+			else {
+				postfix.push(stack.pop());
+				stack.push(infix[i]);
+			}
+		}
+		else if(infix[i] == "(") {
+			stack.push(infix[i]);
+		}
+		else if(infix[i] == ")") {
+			stackLast = stack.pop();
+			while(stackLast != "(") {
+				postfix.push(stackLast);
+				stackLast = stack.pop();
+			}
 		}
 		else if(infix[i] == ",") {
-			//
+			stackLast = stack[stack.length-1];
+			while(stackLast != "(") {
+				postfix.push(stackLast);
+				stack.pop();
+			}
+			stack.push(infix[i])
 		}
 	}
+	while(stack.length > 0) {
+		postfix.push(stack.pop());
+	}
+	console.log(postfix);
 }
 function isOperand(char) {
 	if(!isNaN(Number(char))) {
