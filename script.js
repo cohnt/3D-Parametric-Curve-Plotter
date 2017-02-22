@@ -34,8 +34,7 @@ var debugMode = true;
 var debugModeOnGraph = false;
 var rotateCheckButtonSpeed = 25; //How often the program checks if the rotate button is still pressed, in milliseconds.
 var rotateDegreesPerTick = 1.5; //How many degrees the view rotates per tick.
-var functionStrings = ["+", "-", "*", "/", "^", "%", "cos", "sin", "tan", "cot", "sec", "csc", "arcsin", "arccos", "arctan", "sqrt", "log", "ln", "logbase", "max", "min", "floor", "ceil", "round"];
-var specialNumberStrings = ["PI", "E", "T"];
+var mathSpecialStrings = ["+", "-", "*", "/", "^", "%", "arcsin", "arccos", "arctan", "cos", "sin", "tan", "cot", "sec", "csc", "sqrt", "logbase", "log", "ln", "max", "min", "floor", "ceil", "round", "PI", "E", "T"];
 
 //Global Variables
 var page = {};
@@ -278,40 +277,33 @@ function processFunction(functionString) {
 	//http://stackoverflow.com/questions/11708195/infix-to-postfix-with-function-support
 
 	var infixString = functionString;
+	//var infixArray = infixStringToArray(infixString);
 	//var postfixString = convertInfixToPostfix(infixString);
+}
+function infixStringToArray(infix) {
+	console.log("FUNCTION CALL: infixStringToArray("+infix+")");
+
+	var multiCharStartIndeces = [];
+	var index;
+	for(var i=0; i<mathSpecialStrings.length; ++i) {
+		index = 0;
+		count = 0;
+		do {
+			index = infix.indexOf(mathSpecialStrings[i], index);
+			console.log(index);
+			multiCharStartIndeces.push(index);
+			++count;
+		}
+		while(index > -1);
+	}
+
+	for(var i=0; i<infix.length; ++i) {
+
+	}
 }
 function convertInfixToPostfix(infix) {
 	console.log("FUNCTION CALL: convertInfixToPostfix("+infix+")");
-
-	var outputQueue = "";
-	var operatorStack = "";
-	var token;
-	for(var i=0; i<infix.length; ++i) {
-		token = infix[i];
-		var specialNumber = isSpecialNumber(token, i, infix);
-		if(!isNaN(Number(token))) {
-			outputQueue += token;
-		}
-		else if(specialNumber[0]) {
-			outputQueue += specialNumber[1];
-			i += specialNumber[2];
-		}
-		else if(isFunctionChar(token, i, infix)) {
-
-		}
-		else if(token == ",") {
-
-		}
-	}
-}
-function isSpecialNumber(char, index, equation) {
-	console.log("FUNCTION CALL: isSpecialNumber("+char+", "+index+", "+equation+")");
-
-}
-function isFunctionChar(char, index, equation) {
-	console.log("isFunctionChar("+char+", "+index+", "+equation+")");
-
-
+	//
 }
 function recenter() {
 	console.log("FUNCTION CALL: recenter()");
@@ -573,6 +565,7 @@ function pannedGraph(d) {
 		d3[i] += -1*d[0]*viewBasis[0][i];
 		d3[i] += d[1]*viewBasis[1][i];
 		d3[i] *= dragPanningConstant;
+		d3[i] *= defaults.zoom/zoom;
 	}
 
 	for(var i=0; i<d3.length; ++i) {
