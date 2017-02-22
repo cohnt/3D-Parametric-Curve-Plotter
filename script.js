@@ -1004,11 +1004,11 @@ function keydown(event) {
 	updateGraphDisplay();
 }
 function rotatingCheckAgain() {
-	if(keys[String(81)]) {
+	if(keys[String(81)] && overCanvas) {
 		viewRotation += -1*rotateDegreesPerTick;
 		window.setTimeout(rotatingCheckAgain, rotateCheckButtonSpeed);
 	}
-	else if(keys[String(69)]) {
+	else if(keys[String(69)] && overCanvas) {
 		viewRotation += rotateDegreesPerTick;
 		window.setTimeout(rotatingCheckAgain, rotateCheckButtonSpeed);
 	}
