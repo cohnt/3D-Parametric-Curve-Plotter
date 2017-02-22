@@ -1,3 +1,6 @@
 x(t)=(1+0.25*cos(75*T))*cos(T)
 y(t)=(1+0.25*cos(75*T))*sin(T)
 z(t)=(T+2.0*sin(75*T))/5
+Tmin = 0
+Tmax = 25
+Tstep = 0.001
