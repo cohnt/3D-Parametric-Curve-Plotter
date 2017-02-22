@@ -2,7 +2,7 @@
 var zoomPowerConstant = 1.1; //This is used when calculating the zoom factor when scrolling.
 var mouseWheelCalibrationConstant = 53; //This is the value given when the mouse is scrolled one notch.
 var defaults = { //The defaults that the page loads when you first open it.
-	x: "T/6",
+	x: "cos(arccos(cos(T)))",
 	y: "(E^(1/25))*cos(T)",
 	z: "(E^(1/25))*sin(T)",
 	tmin: "-200",
@@ -278,31 +278,30 @@ function processFunction(functionString) {
 
 	var infixString = functionString;
 	var infixArray = infixStringToArray(infixString);
-	//var postfixString = convertInfixToPostfix(infixString);
+	var postfixString = convertInfixToPostfix(infixString);
 }
 function infixStringToArray(infix) {
 	console.log("FUNCTION CALL: infixStringToArray("+infix+")");
 
-	var multiCharStartIndeces = [];
-	var index;
-	for(var i=0; i<mathSpecialStrings.length; ++i) {
-		index = 0;
-		count = 0;
-		do {
-			index = infix.indexOf(mathSpecialStrings[i], index);
-			console.log(index);
-			if(index != -1) {
-				multiCharStartIndeces.push(index);
-				++index;
+	var infixArray = [];
+	var currentString = infix;
+	var nextChar;
+	while(currentString.length > 0) {
+		nextChar = false;
+		for(var i=0; i<mathSpecialStrings.length; ++i) {
+			if(0 == currentString.indexOf(mathSpecialStrings[i])) {
+				infixArray.push(mathSpecialStrings[i]);
+				currentString = currentString.substr(mathSpecialStrings[i].length);
+				nextChar = true;
+				break;
 			}
-			++count;
 		}
-		while(index > -1);
+		if(!nextChar) {
+			infixArray.push(currentString.substr(0, 1));
+			currentString = currentString.substr(1);
+		}
 	}
-
-	for(var i=0; i<infix.length; ++i) {
-
-	}
+	console.log(infixArray);
 }
 function convertInfixToPostfix(infix) {
 	console.log("FUNCTION CALL: convertInfixToPostfix("+infix+")");
