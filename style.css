@@ -23,6 +23,9 @@ canvas {
 div.container {
 	margin: 1px;
 }
+div#instructions {
+	max-width: 900px;
+}
 textarea.mathInput {
 	height: 18px;
 	width: 200px;
