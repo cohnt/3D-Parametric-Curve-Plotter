@@ -561,6 +561,9 @@ function infixStringToArray(infix) {
 		}
 		if(!nextChar) {
 			num = "";
+			if(currentString[0] == ".") {
+				num += "0";
+			}
 			while(!isNaN(currentString[0]) || currentString[0] == ".") {
 				num = num + currentString[0];
 				currentString = currentString.substr(1);
