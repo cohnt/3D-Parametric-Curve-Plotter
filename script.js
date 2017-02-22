@@ -311,7 +311,7 @@ function convertInfixToPostfix(infix) {
 	var postfix = [];
 	stack = [];
 	for(var i=0; i<infix.length; ++i) {
-		if(isOperand(inflix[i])) {
+		if(isOperand(infix[i])) {
 			//
 		}
 		else if(infix[i] == "(") {
