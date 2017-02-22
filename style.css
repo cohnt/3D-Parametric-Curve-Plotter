@@ -30,6 +30,7 @@ textarea.mathInput {
 	height: 18px;
 	width: 200px;
 	resize: horizontal;
+	max-width: 750px;
 }
 div.valid {
 	height: 18px;
