@@ -135,6 +135,7 @@ var front; //True if looking from the front, false if looking from the back.
 var userFunction = []; //Array of length 3, which each entry being a function you can call.
 var curveCoordinates = []; //Array containing all of the points, in order of the parametric curve.
 var keptMouseDeltas = [];
+var overCanvas = false;
 
 //Classes
 function mathFunc(f, args) {
@@ -207,6 +208,8 @@ function mouseAndKeyboardInputSetup() {
 	page.canvas.addEventListener("mousedown", function(event) { mousedown(event); });
 	document.addEventListener("mouseup", function(event) { mouseup(event); });
 	page.canvas.addEventListener("wheel", function(event) { wheel(event); });
+	page.canvas.addEventListener("mouseenter", function(event) { mouseEnterCanvas(event); });
+	page.canvas.addEventListener("mouseleave", function(event) { mouseLeaveCanvas(event); });
 }
 function loadInitialAndDefaults() {
 	console.log("FUNCTION CALL: loadInitialAndDefaults()");
@@ -965,8 +968,8 @@ function mouseMoved(event) {
 	delta[0] = Math.cos(degToRad(-viewRotation))*(mouseLocation[0]-oldMouseLocation[0]) - Math.sin(degToRad(-viewRotation))*(mouseLocation[1]-oldMouseLocation[1]);
 	delta[1] = Math.sin(degToRad(-viewRotation))*(mouseLocation[0]-oldMouseLocation[0]) + Math.cos(degToRad(-viewRotation))*(mouseLocation[1]-oldMouseLocation[1]);
 
-	currentlyPanning = mouseButtons["1"];
-	currentlyRotating = keys["16"];
+	currentlyPanning = mouseButtons["1"] && overCanvas;
+	currentlyRotating = keys["16"] && overCanvas;
 
 	//Panning takes precedence over rotating.
 	if(currentlyPanning) {
@@ -987,12 +990,12 @@ function mouseMoved(event) {
 	oldMouseLocation[1] = mouseLocation[1];
 }
 function keydown(event) {
-	if(event.which == 81 && !keys[String(81)]) { //Q
+	if(event.which == 81 && !keys[String(81)] && overCanvas) { //Q
 		viewRotation += -1*rotateDegreesPerTick;
 		window.setTimeout(rotatingCheckAgain, rotateCheckButtonSpeed);
 		updateGraphDisplay();
 	}
-	else if(event.which == 69 && !keys[String(69)]) { //E
+	else if(event.which == 69 && !keys[String(69)] && overCanvas) { //E
 		viewRotation += rotateDegreesPerTick;
 		window.setTimeout(rotatingCheckAgain, rotateCheckButtonSpeed);
 		updateGraphDisplay();
@@ -1029,6 +1032,12 @@ function wheel(event) {
 	zoom *= zoomMultiplier;
 	console.log(zoom);
 	updateGraphDisplay();
+}
+function mouseEnterCanvas(event) {
+	overCanvas = true;
+}
+function mouseLeaveCanvas(event) {
+	overCanvas = false;
 }
 
 //Executed Code
