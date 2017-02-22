@@ -2,9 +2,9 @@
 var zoomPowerConstant = 1.1; //This is used when calculating the zoom factor when scrolling.
 var mouseWheelCalibrationConstant = 53; //This is the value given when the mouse is scrolled one notch.
 var defaults = { //The defaults that the page loads when you first open it.
-	x: "cos(arccos(cos(T)))",
-	y: "(E^(1/25))*cos(T)",
-	z: "(E^(1/25))*sin(T)",
+	x: "T/12",
+	y: "(E^(T/25))*cos(T)",
+	z: "(E^(T/25))*sin(T)",
 	tmin: "-200",
 	tmax: "100",
 	tstep: "0.05",
