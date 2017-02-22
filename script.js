@@ -549,20 +549,35 @@ function infixStringToArray(infix) {
 	var currentString = infix;
 	var nextChar;
 	var num = "";
+	var lastCharOperator = true;
+	var negative;
 	while(currentString.length > 0) {
 		nextChar = false;
-		for(var i=0; i<mathSpecialStrings.length; ++i) {
-			if(0 == currentString.indexOf(mathSpecialStrings[i])) {
-				infixArray.push(mathSpecialStrings[i]);
-				currentString = currentString.substr(mathSpecialStrings[i].length);
-				nextChar = true;
-				break;
+		negative = false;
+		if(lastCharOperator && currentString[0] == "-" && !isNaN(currentString[1])) {
+			negative = true;
+		}
+		if(!negative) {
+			for(var i=0; i<mathSpecialStrings.length; ++i) {
+				if(0 == currentString.indexOf(mathSpecialStrings[i])) {
+					infixArray.push(mathSpecialStrings[i]);
+					currentString = currentString.substr(mathSpecialStrings[i].length);
+					nextChar = true;
+					lastCharOperator = true;
+					break;
+				}
 			}
 		}
 		if(!nextChar) {
+			lastCharOperator = false;
 			num = "";
+			if(currentString[0] == "-") {
+				num += "-";
+				currentString = currentString.substr(1);
+			}
 			if(currentString[0] == ".") {
 				num += "0";
+				currentString = currentString.substr(1);
 			}
 			while(!isNaN(currentString[0]) || currentString[0] == ".") {
 				num = num + currentString[0];
