@@ -34,14 +34,32 @@ var debugMode = true;
 var debugModeOnGraph = false;
 var rotateCheckButtonSpeed = 25; //How often the program checks if the rotate button is still pressed, in milliseconds.
 var rotateDegreesPerTick = 1.5; //How many degrees the view rotates per tick.
-var mathSpecialStrings = ["+", "-", "*", "/", "^", "%", "arcsin", "arccos", "arctan", "cos", "sin", "tan", "cot", "sec", "csc", "sqrt", "logbase", "log", "ln", "max", "min", "floor", "ceil", "round", "PI", "E", "T"];
+var mathSpecialStrings = ["(", ")", "+", "-", "*", "/", "^", "%", "arcsin", "arccos", "arctan", "cos", "sin", "tan", "cot", "sec", "csc", "sqrt", "logbase", "log", "ln", "max", "min", "floor", "ceil", "round", "PI", "E", "T"];
 var precedence = {
 	"+": 2,
 	"-": 2,
 	"*": 3,
 	"/": 3,
-	"^": 4,
-	"sin": 4
+	"^": 5,
+	"sin": 4,
+	"cos": 4,
+	"tan": 4,
+	"cot": 4,
+	"sec": 4,
+	"csc": 4,
+	"%": 4,
+	"arcsin": 4,
+	"arccos": 4,
+	"arctan": 4,
+	"sqrt": 4,
+	"logbase": 4,
+	"log": 4,
+	"ln": 4,
+	"max": 4,
+	"min": 4,
+	"floor": 4,
+	"ceil": 4,
+	"round": 4
 };
 var associativity = {
 	"+": "left",
@@ -50,6 +68,24 @@ var associativity = {
 	"/": "left",
 	"^": "right",
 	"sin": "right",
+	"cos": "right",
+	"tan": "right",
+	"cot": "right",
+	"sec": "right",
+	"csc": "right",
+	"%": "left",
+	"arcsin": "right",
+	"arccos": "right",
+	"arctan": "right",
+	"sqrt": "right",
+	"logbase": "right",
+	"log": "right",
+	"ln": "right",
+	"max": "right",
+	"min": "right",
+	"floor": "right",
+	"ceil": "right",
+	"round": "right"
 };
 
 //Global Variables
@@ -302,6 +338,7 @@ function infixStringToArray(infix) {
 	var infixArray = [];
 	var currentString = infix;
 	var nextChar;
+	var num = "";
 	while(currentString.length > 0) {
 		nextChar = false;
 		for(var i=0; i<mathSpecialStrings.length; ++i) {
@@ -313,8 +350,12 @@ function infixStringToArray(infix) {
 			}
 		}
 		if(!nextChar) {
-			infixArray.push(currentString.substr(0, 1));
-			currentString = currentString.substr(1);
+			num = "";
+			while(!isNaN(currentString[0])) {
+				num = num + currentString[0];
+				currentString = currentString.substr(1);
+			}
+			infixArray.push(num);
 		}
 	}
 	console.log(infixArray);
@@ -332,6 +373,16 @@ function convertInfixToPostfix(infix) {
 		if(isOperand(infix[i])) {
 			postfix.push(infix[i]);
 		}
+		else if(infix[i] == "(") {
+			stack.push(infix[i]);
+		}
+		else if(infix[i] == ")") {
+			stackLast = stack.pop();
+			while(stackLast != "(") {
+				postfix.push(stackLast);
+				stackLast = stack.pop();
+			}
+		}
 		else if(isOperator(infix[i])) {
 			if(stack.length == 0 || stack[stack.length-1] == "(") {
 				stack.push(infix[i]);
@@ -345,16 +396,6 @@ function convertInfixToPostfix(infix) {
 			else {
 				postfix.push(stack.pop());
 				stack.push(infix[i]);
-			}
-		}
-		else if(infix[i] == "(") {
-			stack.push(infix[i]);
-		}
-		else if(infix[i] == ")") {
-			stackLast = stack.pop();
-			while(stackLast != "(") {
-				postfix.push(stackLast);
-				stackLast = stack.pop();
 			}
 		}
 		else if(infix[i] == ",") {
