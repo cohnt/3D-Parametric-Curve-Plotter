@@ -502,37 +502,41 @@ function makeFunction(func, args) {
 			break;
 		case "log":
 			returnObjFunc = function(t) {
-
+				return Math.log(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "ln":
 			returnObjFunc = function(t) {
-
+				return Math.log(this.args[0].func(t, this.args[0].args))/Math.log(Math.E);
 			}
 			break;
 		case "max":
 			returnObjFunc = function(t) {
-
+				var a = this.args[0].func(t, this.args[0].args);
+				var b = this.args[1].func(t, this.args[1].args);
+				return a>b ? a : b;
 			}
 			break;
 		case "min":
 			returnObjFunc = function(t) {
-
+				var a = this.args[0].func(t, this.args[0].args);
+				var b = this.args[1].func(t, this.args[1].args);
+				return a<b ? a : b;
 			}
 			break;
 		case "floor":
 			returnObjFunc = function(t) {
-
+				return Math.floor(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "ceil":
 			returnObjFunc = function(t) {
-
+				return Math.ceil(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 		case "round":
 			returnObjFunc = function(t) {
-
+				return Math.round(this.args[0].func(t, this.args[0].args));
 			}
 			break;
 	}
@@ -557,7 +561,7 @@ function infixStringToArray(infix) {
 		}
 		if(!nextChar) {
 			num = "";
-			while(!isNaN(currentString[0])) {
+			while(!isNaN(currentString[0]) || currentString[0] == ".") {
 				num = num + currentString[0];
 				currentString = currentString.substr(1);
 			}
