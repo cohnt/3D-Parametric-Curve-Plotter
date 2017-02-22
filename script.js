@@ -277,7 +277,7 @@ function processFunction(functionString) {
 	//http://stackoverflow.com/questions/11708195/infix-to-postfix-with-function-support
 
 	var infixString = functionString;
-	//var infixArray = infixStringToArray(infixString);
+	var infixArray = infixStringToArray(infixString);
 	//var postfixString = convertInfixToPostfix(infixString);
 }
 function infixStringToArray(infix) {
@@ -291,7 +291,10 @@ function infixStringToArray(infix) {
 		do {
 			index = infix.indexOf(mathSpecialStrings[i], index);
 			console.log(index);
-			multiCharStartIndeces.push(index);
+			if(index != -1) {
+				multiCharStartIndeces.push(index);
+				++index;
+			}
 			++count;
 		}
 		while(index > -1);
