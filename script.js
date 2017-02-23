@@ -114,6 +114,7 @@ var funcArgs = {
 	"round": 1
 }
 var tstepMinValue = 0.000001;
+var maxDisplayValue = 100000;
 
 //Global Variables
 var page = {};
@@ -296,8 +297,12 @@ function drawCurve() {
 	context.beginPath();
 
 	for(var i=1; i<curveCoordinates.length; ++i) {
-		currentPoint = projectOntoScreen(curveCoordinates[i]);
-		context.lineTo(currentPoint[0], currentPoint[1]);
+		if(isFinite(curveCoordinates[i][0] && isFinite(curveCoordinates[i][1]) && isFinite(curveCoordinates[i][2]))) {
+			if(Math.abs(curveCoordinates[i][0]) < maxDisplayValue && Math.abs(curveCoordinates[i][1]) < maxDisplayValue && Math.abs(curveCoordinates[i][2]) < maxDisplayValue) {
+				currentPoint = projectOntoScreen(curveCoordinates[i]);
+				context.lineTo(currentPoint[0], currentPoint[1]);
+			}
+		}
 	}
 	context.stroke();
 }
