@@ -113,6 +113,7 @@ var funcArgs = {
 	"ceil": 1,
 	"round": 1
 }
+var tstepMinValue = 0.000001;
 
 //Global Variables
 var page = {};
@@ -227,6 +228,13 @@ function loadInitialAndDefaults() {
 }
 function updateGraphComputations() {
 	console.log("FUNCTION CALL: updateGraphComputations()");
+
+	if(isNaN(Number(page.tminInputField.value)) || isNaN(Number(page.tmaxInputField.value)) || isNaN(Number(page.tstepInputField.value))) {
+		return;
+	}
+	if(Number(page.tstepInputField.value) < tstepMinValue) {
+		return;
+	}
 
 	processFunctions();
 	getCurvePoints();
@@ -1019,7 +1027,6 @@ function keydown(event) {
 		updateGraphDisplay();
 	}
 	keys[String(event.which)] = true;
-	updateGraphDisplay();
 }
 function rotatingCheckAgain() {
 	if(keys[String(81)] && overCanvas) {
