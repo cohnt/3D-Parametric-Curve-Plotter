@@ -164,9 +164,9 @@ function setup() {
 
 	context = page.canvas.getContext("2d");
 
-	page.xInputField.addEventListener("change", processFunctions);
-	page.yInputField.addEventListener("change", processFunctions);
-	page.zInputField.addEventListener("change", processFunctions);
+	page.xInputField.addEventListener("change", function() { processFunction("x"); });
+	page.yInputField.addEventListener("change", function() { processFunction("y"); });
+	page.zInputField.addEventListener("change", function() { processFunction("z"); });
 	page.plotButton.addEventListener("click", updateGraphComputations);
 	page.tminInputField.addEventListener("change", updateGraphComputations);
 	page.tmaxInputField.addEventListener("change", updateGraphComputations);
@@ -237,7 +237,7 @@ function updateGraphComputations() {
 		return;
 	}
 
-	processFunctions();
+	processAllFunctions();
 	getCurvePoints();
 
 	updateGraphDisplay();
@@ -351,34 +351,48 @@ function setConstantContextTransforms() {
 	context.transform(1, 0, 0, -1, 0, 0); //Flip the canvas vertically.
 	context.lineWidth = 1/zoom; //Keep the lines the same thickness.
 }
-function processFunctions() {
-	console.log("FUNCTION CALL: processFunctions()");
-	
-	//This is the hard part XD
+function processFunction(func) {
+	console.log("FUNCTION CALL: processFunction("+func+")");
+
 	try {
-		userFunction[0] = processFunction(page.xInputField.value);
-		page.xValid.style.display = "none";
+		var raw;
+		switch(func) {
+			case "x":
+				userFunction[0] = convertFunc(page.xInputField.value);
+				page.xValid.style.display = "none";
+				break;
+			case "y":
+				userFunction[1] = convertFunc(page.yInputField.value);
+				page.yValid.style.display = "none";
+				break;
+			case "z":
+				userFunction[2] = convertFunc(page.zInputField.value);
+				page.zValid.style.display = "none";
+				break;
+		}
 	}
 	catch(err) {
-		page.xValid.style.display = "inline-block";
-	}
-	try {
-		userFunction[1] = processFunction(page.yInputField.value);
-		page.yValid.style.display = "none";
-	}
-	catch(err) {
-		page.yValid.style.display = "inline-block";
-	}
-	try {
-		userFunction[2] = processFunction(page.zInputField.value);
-		page.zValid.style.display = "none";
-	}
-	catch(err) {
-		page.zValid.style.display = "inline-block";
+		switch(func) {
+			case "x":
+				page.xValid.style.display = "inline-block";
+				break;
+			case "y":
+				page.yValid.style.display = "inline-block";
+				break;
+			case "z":
+				page.zValid.style.display = "inline-block";
+		}
 	}
 }
-function processFunction(functionString) {
-	console.log("FUNCTION CALL: processFunction("+functionString+")");
+function processAllFunctions() {
+	console.log("FUNCTION CALL: processAllFunctions()");
+	
+	processFunction("x");
+	processFunction("y");
+	processFunction("z");
+}
+function convertFunc(functionString) {
+	console.log("FUNCTION CALL: convertFunc("+functionString+")");
 
 	//Using these resources:
 	//http://stackoverflow.com/questions/114586/smart-design-of-a-math-parser
