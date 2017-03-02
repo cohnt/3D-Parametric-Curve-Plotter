@@ -586,6 +586,12 @@ function infixStringToArray(infix) {
 	var lastCharOperator = true;
 	var negative;
 	while(currentString.length > 0) {
+		while(currentString[0] == " " && currentString.length > 0) {
+			currentString = currentString.substr(1);
+		}
+		if(currentString.length == 0) {
+			break;
+		}
 		nextChar = false;
 		negative = false;
 		if(lastCharOperator && currentString[0] == "-" && !isNaN(currentString[1])) {
