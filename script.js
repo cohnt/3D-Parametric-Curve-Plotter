@@ -134,10 +134,11 @@ var viewBasis = [];
 var viewRotation = 0;
 var center = [];
 var front; //True if looking from the front, false if looking from the back.
-var userFunction = []; //Array of length 3, which each entry being a function you can call.
+var userFunction = []; //Array of length 3, with each entry being a function you can call.
 var curveCoordinates = []; //Array containing all of the points, in order of the parametric curve.
 var keptMouseDeltas = [];
 var overCanvas = false;
+var functionsValid = []; //Array of length 3, with each entry being the validity status of the x, y, and z functions.
 
 //Classes
 function mathFunc(f, args) {
@@ -212,6 +213,13 @@ function mouseAndKeyboardInputSetup() {
 	page.canvas.addEventListener("wheel", function(event) { wheel(event); });
 	page.canvas.addEventListener("mouseenter", function(event) { mouseEnterCanvas(event); });
 	page.canvas.addEventListener("mouseleave", function(event) { mouseLeaveCanvas(event); });
+
+	page.xInputField.addEventListener("focus", function() { if(functionsValid[0]) {this.select();} });
+	page.yInputField.addEventListener("focus", function() { if(functionsValid[1]) {this.select();} });
+	page.zInputField.addEventListener("focus", function() { if(functionsValid[2]) {this.select();} });
+	page.tminInputField.addEventListener("focus", function() { this.select(); });
+	page.tmaxInputField.addEventListener("focus", function() { this.select(); });
+	page.tstepInputField.addEventListener("focus", function() { this.select(); });
 }
 function loadInitialAndDefaults() {
 	console.log("FUNCTION CALL: loadInitialAndDefaults()");
@@ -360,27 +368,47 @@ function processFunction(func) {
 			case "x":
 				userFunction[0] = convertFunc(page.xInputField.value);
 				page.xValid.style.display = "none";
+				functionsValid[0] = true;
 				break;
 			case "y":
 				userFunction[1] = convertFunc(page.yInputField.value);
 				page.yValid.style.display = "none";
+				functionsValid[1] = true;
 				break;
 			case "z":
 				userFunction[2] = convertFunc(page.zInputField.value);
 				page.zValid.style.display = "none";
+				functionsValid[2] = true;
 				break;
 		}
 	}
 	catch(err) {
+		console.log(err);
 		switch(func) {
 			case "x":
 				page.xValid.style.display = "inline-block";
+				functionsValid[0] = false;
+				window.setTimeout(function() {
+					page.xInputField.setSelectionRange(err, err+1);
+					page.xInputField.focus();
+				}, 0);
 				break;
 			case "y":
 				page.yValid.style.display = "inline-block";
+				functionsValid[1] = false;
+				window.setTimeout(function() {
+					page.yInputField.setSelectionRange(err, err+1);
+					page.yInputField.focus();
+				}, 0);
 				break;
 			case "z":
 				page.zValid.style.display = "inline-block";
+				functionsValid[2] = false;
+				window.setTimeout(function() {
+					page.zInputField.setSelectionRange(err, err+1);
+					page.zInputField.focus();
+				}, 0);
+				break;
 		}
 	}
 }
@@ -599,9 +627,11 @@ function infixStringToArray(infix) {
 	var num = "";
 	var lastCharOperator = true;
 	var negative;
+	var currentCharIndex = 0;
 	while(currentString.length > 0) {
 		while(currentString[0] == " " && currentString.length > 0) {
 			currentString = currentString.substr(1);
+			++currentCharIndex;
 		}
 		if(currentString.length == 0) {
 			break;
@@ -616,6 +646,7 @@ function infixStringToArray(infix) {
 				if(0 == currentString.indexOf(mathSpecialStrings[i])) {
 					infixArray.push(mathSpecialStrings[i]);
 					currentString = currentString.substr(mathSpecialStrings[i].length);
+					currentCharIndex += mathSpecialStrings[i].length;
 					nextChar = true;
 					if(!(mathSpecialStrings[i] == "(" || mathSpecialStrings[i] == ")")) {
 						lastCharOperator = true;
@@ -630,17 +661,20 @@ function infixStringToArray(infix) {
 			if(currentString[0] == "-") {
 				num += "-";
 				currentString = currentString.substr(1);
+				++currentCharIndex;
 			}
 			if(currentString[0] == ".") {
 				num += "0";
 				currentString = currentString.substr(1);
+				++currentCharIndex;
 			}
 			if(!isOperand(currentString[0])) {
-				throw("Error! Unrecognized character: " + currentString[0]);
+				throw(currentCharIndex);
 			}
 			while(!isNaN(currentString[0]) || currentString[0] == ".") {
 				num = num + currentString[0];
 				currentString = currentString.substr(1);
+				++currentCharIndex;
 			}
 			infixArray.push(num);
 		}
