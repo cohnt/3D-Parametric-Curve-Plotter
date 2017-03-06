@@ -388,26 +388,32 @@ function processFunction(func) {
 			case "x":
 				page.xValid.style.display = "inline-block";
 				functionsValid[0] = false;
-				window.setTimeout(function() {
-					page.xInputField.setSelectionRange(err, err+1);
-					page.xInputField.focus();
-				}, 0);
+				if(!isNaN(Number(err))) {
+					window.setTimeout(function() {
+						page.xInputField.setSelectionRange(err, err+1);
+						page.xInputField.focus();
+					}, 0);
+				}
 				break;
 			case "y":
 				page.yValid.style.display = "inline-block";
 				functionsValid[1] = false;
-				window.setTimeout(function() {
-					page.yInputField.setSelectionRange(err, err+1);
-					page.yInputField.focus();
-				}, 0);
+				if(!isNaN(Number(err))) {
+					window.setTimeout(function() {
+						page.yInputField.setSelectionRange(err, err+1);
+						page.yInputField.focus();
+					}, 0);
+				}
 				break;
 			case "z":
 				page.zValid.style.display = "inline-block";
 				functionsValid[2] = false;
-				window.setTimeout(function() {
-					page.zInputField.setSelectionRange(err, err+1);
-					page.zInputField.focus();
-				}, 0);
+				if(!isNaN(Number(err))) {
+					window.setTimeout(function() {
+						page.zInputField.setSelectionRange(err, err+1);
+						page.zInputField.focus();
+					}, 0);
+				}
 				break;
 		}
 	}
@@ -700,6 +706,9 @@ function convertInfixToPostfix(infix) {
 		else if(infix[i] == ")") {
 			stackLast = stack.pop();
 			while(stackLast != "(") {
+				if(typeof stackLast == "undefined") {
+					throw("Mismatched parentheses!");
+				}
 				postfix.push(stackLast);
 				stackLast = stack.pop();
 			}
