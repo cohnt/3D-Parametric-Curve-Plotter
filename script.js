@@ -1168,6 +1168,8 @@ function mouseup(event) {
 	mouseButtons[String(event.which)] = false;
 }
 function wheel(event) {
+	event.preventDefault();
+	event.returnValue = false;
 	var wheelChange = event.deltaY;
 	var zoomMultiplier = Math.pow(zoomPowerConstant, wheelChange*(1/mouseWheelCalibrationConstant)); //I may want to change how this zoom works later.
 	zoom *= zoomMultiplier;
