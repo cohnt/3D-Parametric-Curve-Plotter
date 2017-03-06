@@ -194,13 +194,43 @@ function debugSetup() {
 
 	var debugArea = document.createElement("div");
 	debugArea.setAttribute("id", "debugArea");
+	
+	var clearButton = document.createElement("div");
+	clearButton.appendChild(document.createTextNode("Clear Debug Area"));
+	clearButton.setAttribute("id", "debugClearButton");
+	debugArea.appendChild(clearButton);
+
 	var mouseDelta = document.createElement("div");
 	mouseDelta.setAttribute("id", "mouseDeltaCont");
 	debugArea.appendChild(mouseDelta);
+	
+	var errors = document.createElement("div");
+	errors.setAttribute("id", "errorsCont");
+	debugArea.appendChild(errors);
+	
 	document.body.appendChild(debugArea);
 
 	page.debugArea = document.getElementById("debugArea");
+
+	page.debugClearButton = document.getElementById("debugClearButton");
+	page.debugClearButton.style.padding = "10px";
+	page.debugClearButton.style.backgroundColor = "#aaffaa";
+	page.debugClearButton.style.verticalAlign = "top";
+	page.debugClearButton.addEventListener("click", clearDebugArea);
+
 	page.mouseDeltaCont = document.getElementById("mouseDeltaCont");
+	page.mouseDeltaCont.style.border = "1px dotted black";
+	page.mouseDeltaCont.style.verticalAlign = "top";
+
+	page.errorsCont = document.getElementById("errorsCont");
+	page.errorsCont.style.border = "1px dotted black";
+	page.errorsCont.style.verticalAlign = "top";
+}
+function clearDebugArea() {
+	console.log("FUNCTION CALL: clearDebugArea()");
+
+	page.mouseDeltaCont.innerHTML = "";
+	page.errorsCont.innerHTML = "";
 }
 function mouseAndKeyboardInputSetup() {
 	console.log("FUNCTION CALL: mouseAndKeyboardInputSetup()");
@@ -383,6 +413,19 @@ function processFunction(func) {
 		}
 	}
 	catch(err) {
+		var lastError = document.createElement("pre");
+		if(!isNaN(err)) {
+			var text = document.createTextNode("Illegal character in function: "+func+" at position: "+err);
+		}
+		else {
+			var text = document.createTextNode(err);
+		}
+		lastError.appendChild(text);
+		var lineBreak = document.createElement("br");
+
+		page.errorsCont.insertBefore(lineBreak, page.errorsCont.childNodes[0]);
+		page.errorsCont.insertBefore(lastError, page.errorsCont.childNodes[0]);
+
 		console.log(err);
 		switch(func) {
 			case "x":
