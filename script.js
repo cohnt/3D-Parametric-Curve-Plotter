@@ -739,6 +739,11 @@ function convertInfixToPostfix(infix) {
 	while(stack.length > 0) {
 		postfix.push(stack.pop());
 	}
+	for(var i=0; i<postfix.length; ++i) {
+		if(postfix[i] == "(") {
+			throw("Mismatched parentheses!");
+		}
+	}
 	console.log(postfix);
 	return postfix;
 }
