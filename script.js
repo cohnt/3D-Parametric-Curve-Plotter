@@ -761,6 +761,7 @@ function convertInfixToPostfix(infix) {
 			while(stackLast != "(") {
 				postfix.push(stackLast);
 				stack.pop();
+				stackLast = stack[stack.length-1];
 			}
 		}
 		else if(isOperator(infix[i])) {
