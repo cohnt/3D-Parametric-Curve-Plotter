@@ -144,24 +144,27 @@ function mathFunc(f, args) {
 function setup() {
 	console.log("FUNCTION CALL: setup()");
 
-	page.xInputField = document.getElementById("xFunction");
-	page.yInputField = document.getElementById("yFunction");
-	page.zInputField = document.getElementById("zFunction");
+	page.inputField = [];
+	page.valid = [];
+
+	page.inputField[0] = document.getElementById("xFunction");
+	page.inputField[1] = document.getElementById("yFunction");
+	page.inputField[2] = document.getElementById("zFunction");
 	page.plotButton = document.getElementById("plotButton");
 	page.tminInputField = document.getElementById("tmin");
 	page.tmaxInputField = document.getElementById("tmax");
 	page.tstepInputField = document.getElementById("tstep");
 	page.recenterButton = document.getElementById("returnToCenter");
-	page.xValid = document.getElementById("xValid");
-	page.yValid = document.getElementById("yValid");
-	page.zValid = document.getElementById("zValid");
+	page.valid[0] = document.getElementById("xValid");
+	page.valid[1] = document.getElementById("yValid");
+	page.valid[2] = document.getElementById("zValid");
 	page.canvas = document.getElementById("graph");
 
 	context = page.canvas.getContext("2d");
 
-	page.xInputField.addEventListener("change", function() { processFunction("x"); });
-	page.yInputField.addEventListener("change", function() { processFunction("y"); });
-	page.zInputField.addEventListener("change", function() { processFunction("z"); });
+	page.inputField[0].addEventListener("change", function() { processFunction(0); });
+	page.inputField[1].addEventListener("change", function() { processFunction(1); });
+	page.inputField[2].addEventListener("change", function() { processFunction(2); });
 	page.plotButton.addEventListener("click", updateGraphComputations);
 	page.tminInputField.addEventListener("change", updateGraphComputations);
 	page.tmaxInputField.addEventListener("change", updateGraphComputations);
@@ -238,18 +241,18 @@ function mouseAndKeyboardInputSetup() {
 	page.canvas.addEventListener("mouseenter", function(event) { mouseEnterCanvas(event); });
 	page.canvas.addEventListener("mouseleave", function(event) { mouseLeaveCanvas(event); });
 
-	page.xInputField.addEventListener("focus", function() { if(functionsValid[0]) {this.select();} });
-	page.yInputField.addEventListener("focus", function() { if(functionsValid[1]) {this.select();} });
-	page.zInputField.addEventListener("focus", function() { if(functionsValid[2]) {this.select();} });
+	for(var i=0; i<3; ++i) {
+		page.inputField[i].addEventListener("focus", function() { if(functionsValid[i]) {this.select();} });
+	}
 	page.tminInputField.addEventListener("focus", function() { this.select(); });
 	page.tmaxInputField.addEventListener("focus", function() { this.select(); });
 	page.tstepInputField.addEventListener("focus", function() { this.select(); });
 }
 function loadInitialAndDefaults() {
 	console.log("FUNCTION CALL: loadInitialAndDefaults()");
-	page.xInputField.value = defaults.func[0];
-	page.yInputField.value = defaults.func[1];
-	page.zInputField.value = defaults.func[2];
+	for(var i=0; i<3; ++i) {
+		page.inputField[i].value = defaults.func[i];
+	}
 	page.tminInputField.value = defaults.tmin;
 	page.tmaxInputField.value = defaults.tmax;
 	page.tstepInputField.value = defaults.tstep;
@@ -397,24 +400,10 @@ function processFunction(func) {
 	console.log("FUNCTION CALL: processFunction("+func+")");
 
 	try {
-		var raw;
-		switch(func) {
-			case "x":
-				userFunction[0] = convertFunc(page.xInputField.value);
-				page.xValid.style.display = "none";
-				functionsValid[0] = true;
-				break;
-			case "y":
-				userFunction[1] = convertFunc(page.yInputField.value);
-				page.yValid.style.display = "none";
-				functionsValid[1] = true;
-				break;
-			case "z":
-				userFunction[2] = convertFunc(page.zInputField.value);
-				page.zValid.style.display = "none";
-				functionsValid[2] = true;
-				break;
-		}
+		var raw
+		userFunction[func] = convertFunc(page.inputField[func].value);
+		page.valid[func].style.display = "none";
+		functionsValid[func] = true;
 	}
 	catch(err) {
 		var lastError = document.createElement("pre");
@@ -431,61 +420,28 @@ function processFunction(func) {
 		page.errorsCont.insertBefore(lastError, page.errorsCont.childNodes[0]);
 
 		console.log(err);
-		switch(func) {
-			case "x":
-				page.xValid.style.display = "inline-block";
-				functionsValid[0] = false;
-				if(!isNaN(Number(err))) {
-					window.setTimeout(function() {
-						page.xInputField.setSelectionRange(err, err+1);
-						page.xInputField.focus();
-					}, 0);
-				}
-				else {
-					window.setTimeout(function() {
-						page.xInputField.focus();
-					}, 0);
-				}
-				break;
-			case "y":
-				page.yValid.style.display = "inline-block";
-				functionsValid[1] = false;
-				if(!isNaN(Number(err))) {
-					window.setTimeout(function() {
-						page.yInputField.setSelectionRange(err, err+1);
-						page.yInputField.focus();
-					}, 0);
-				}
-				else {
-					window.setTimeout(function() {
-						page.yInputField.focus();
-					}, 0);
-				}
-				break;
-			case "z":
-				page.zValid.style.display = "inline-block";
-				functionsValid[2] = false;
-				if(!isNaN(Number(err))) {
-					window.setTimeout(function() {
-						page.zInputField.setSelectionRange(err, err+1);
-						page.zInputField.focus();
-					}, 0);
-				}
-				else {
-					window.setTimeout(function() {
-						page.zInputField.focus();
-					}, 0);
-				}
-				break;
+
+		page.valid[func].style.display = "inline-block";
+		functionsValid[func] = false;
+		if(!isNaN(Number(err))) {
+			window.setTimeout(function() {
+				page.inputField[func].setSelectionRange(err, err+1);
+				page.inputField[func].focus();
+			}, 0);
+		}
+		else {
+			window.setTimeout(function() {
+				page.inputField[func].focus();
+			}, 0);
 		}
 	}
 }
 function processAllFunctions() {
 	console.log("FUNCTION CALL: processAllFunctions()");
 	
-	processFunction("x");
-	processFunction("y");
-	processFunction("z");
+	for(var i=0; i<3; ++i) {
+		processFunction(i);
+	}
 }
 function convertFunc(functionString) {
 	console.log("FUNCTION CALL: convertFunc("+functionString+")");
