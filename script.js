@@ -228,6 +228,7 @@ function clearDebugArea() {
 
 	page.mouseDeltaCont.innerHTML = "";
 	page.errorsCont.innerHTML = "";
+	keptMouseDeltas = [];
 }
 function mouseAndKeyboardInputSetup() {
 	console.log("FUNCTION CALL: mouseAndKeyboardInputSetup()");
