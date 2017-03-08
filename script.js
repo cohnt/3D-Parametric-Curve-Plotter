@@ -2,9 +2,7 @@
 var zoomPowerConstant = 1.1; //This is used when calculating the zoom factor when scrolling.
 var mouseWheelCalibrationConstant = 53; //This is the value given when the mouse is scrolled one notch.
 var defaults = { //The defaults that the page loads when you first open it.
-	x: "(1+0.25*cos(75*T))*cos(T)",
-	y: "(1+0.25*cos(75*T))*sin(T)",
-	z: "(T+2.0*sin(75*T))/5",
+	func: ["(1+0.25*cos(75*T))*cos(T)", "(1+0.25*cos(75*T))*sin(T)", "(T+2.0*sin(75*T))/5"],
 	tmin: "0",
 	tmax: "25",
 	tstep: "0.001",
@@ -121,9 +119,6 @@ var page = {};
 var keys = {};
 var mouseButtons = {};
 var context;
-var xFunction;
-var yFunction;
-var zFunction;
 var mouseLocation = [];
 var oldMouseLocation = [];
 var zoom;
@@ -133,7 +128,6 @@ var viewVector = [];
 var viewBasis = [];
 var viewRotation = 0;
 var center = [];
-var front; //True if looking from the front, false if looking from the back.
 var userFunction = []; //Array of length 3, with each entry being a function you can call.
 var curveCoordinates = []; //Array containing all of the points, in order of the parametric curve.
 var keptMouseDeltas = [];
@@ -253,9 +247,9 @@ function mouseAndKeyboardInputSetup() {
 }
 function loadInitialAndDefaults() {
 	console.log("FUNCTION CALL: loadInitialAndDefaults()");
-	page.xInputField.value = defaults.x;
-	page.yInputField.value = defaults.y;
-	page.zInputField.value = defaults.z
+	page.xInputField.value = defaults.func[0];
+	page.yInputField.value = defaults.func[1];
+	page.zInputField.value = defaults.func[2];
 	page.tminInputField.value = defaults.tmin;
 	page.tmaxInputField.value = defaults.tmax;
 	page.tstepInputField.value = defaults.tstep;
