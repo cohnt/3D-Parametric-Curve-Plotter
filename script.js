@@ -359,13 +359,15 @@ function updateDebugDisplay() {
 		page.mouseDeltaCont.removeChild(page.mouseDeltaCont.childNodes[page.mouseDeltaCont.childNodes.length-1]);
 	}
 
-	var lastMouseDelta = document.createElement("pre");
-	var data = document.createTextNode(String(keptMouseDeltas[keptMouseDeltas.length-1]));
-	lastMouseDelta.appendChild(data);
-	var lineBreak = document.createElement("br");
+	if(!(typeof keptMouseDeltas[keptMouseDeltas.length-1] == "undefined")) {
+		var lastMouseDelta = document.createElement("pre");
+		var data = document.createTextNode(String(keptMouseDeltas[keptMouseDeltas.length-1]));
+		lastMouseDelta.appendChild(data);
+		var lineBreak = document.createElement("br");
 
-	page.mouseDeltaCont.insertBefore(lineBreak, page.mouseDeltaCont.childNodes[0]);
-	page.mouseDeltaCont.insertBefore(lastMouseDelta, page.mouseDeltaCont.childNodes[0]);
+		page.mouseDeltaCont.insertBefore(lineBreak, page.mouseDeltaCont.childNodes[0]);
+		page.mouseDeltaCont.insertBefore(lastMouseDelta, page.mouseDeltaCont.childNodes[0]);
+	}
 
 	if(debugModeOnGraph) {
 		drawViewVector(); //This is used for debugging purposes. Furthermore, you should never see this vector, as it should be perfectly edge-on.
@@ -437,6 +439,11 @@ function processFunction(func) {
 						page.xInputField.focus();
 					}, 0);
 				}
+				else {
+					window.setTimeout(function() {
+						page.xInputField.focus();
+					}, 0);
+				}
 				break;
 			case "y":
 				page.yValid.style.display = "inline-block";
@@ -447,6 +454,11 @@ function processFunction(func) {
 						page.yInputField.focus();
 					}, 0);
 				}
+				else {
+					window.setTimeout(function() {
+						page.yInputField.focus();
+					}, 0);
+				}
 				break;
 			case "z":
 				page.zValid.style.display = "inline-block";
@@ -454,6 +466,11 @@ function processFunction(func) {
 				if(!isNaN(Number(err))) {
 					window.setTimeout(function() {
 						page.zInputField.setSelectionRange(err, err+1);
+						page.zInputField.focus();
+					}, 0);
+				}
+				else {
+					window.setTimeout(function() {
 						page.zInputField.focus();
 					}, 0);
 				}
@@ -762,6 +779,9 @@ function convertInfixToPostfix(infix) {
 				postfix.push(stackLast);
 				stack.pop();
 				stackLast = stack[stack.length-1];
+				if(typeof stackLast == "undefined") {
+					throw("Comma error!");
+				}
 			}
 		}
 		else if(isOperator(infix[i])) {
