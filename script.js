@@ -354,12 +354,20 @@ function dynamicContextTransformations() {
 function updateDebugDisplay() {
 	console.log("FUNCTION CALL: updateDebugDisplay()");
 
-	if(page.mouseDeltaCont.childNodes.length >= 2*mouseDeltasToKeep) {
-		page.mouseDeltaCont.removeChild(page.mouseDeltaCont.childNodes[page.mouseDeltaCont.childNodes.length-1]);
-		page.mouseDeltaCont.removeChild(page.mouseDeltaCont.childNodes[page.mouseDeltaCont.childNodes.length-1]);
+	var newVal = true;
+
+	if(page.mouseDeltaCont.childNodes.length > 0) {
+		if(!(page.mouseDeltaCont.childNodes[0].innerHTML == String(keptMouseDeltas[0]))) {
+			newVal = false;
+		}
 	}
 
-	if(!(typeof keptMouseDeltas[keptMouseDeltas.length-1] == "undefined")) {
+	if(newVal && !(typeof keptMouseDeltas[keptMouseDeltas.length-1] == "undefined")) {
+		if(page.mouseDeltaCont.childNodes.length >= 2*mouseDeltasToKeep) {
+			page.mouseDeltaCont.removeChild(page.mouseDeltaCont.childNodes[page.mouseDeltaCont.childNodes.length-1]);
+			page.mouseDeltaCont.removeChild(page.mouseDeltaCont.childNodes[page.mouseDeltaCont.childNodes.length-1]);
+		}
+
 		var lastMouseDelta = document.createElement("pre");
 		var data = document.createTextNode(String(keptMouseDeltas[keptMouseDeltas.length-1]));
 		lastMouseDelta.appendChild(data);
